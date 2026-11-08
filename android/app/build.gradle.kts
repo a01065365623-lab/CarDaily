@@ -37,9 +37,9 @@ android {
         applicationId = "com.kbraingames.cardaily"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        // google_mobile_ads(AdMob)가 minSdk 23을 요구해서 flutter.minSdkVersion(21)보다
-        // 올려야 한다. Android 6.0(API 23) 미만 기기는 지원하지 않게 됨.
-        minSdk = 23
+        // Google Play가 프로덕션 업로드에 minSdk 24 이상을 요구한다(google_mobile_ads는 23 요구).
+        // Android 7.0(API 24) 미만 기기는 지원하지 않게 됨.
+        minSdk = 24
         // Google Play 정책(2026-08-31~)에 따라 targetSdk 36(Android 16)을 명시적으로 고정.
         // flutter.targetSdkVersion은 현재 설치된 Flutter(3.29.3) 기준 35라서 직접 지정한다.
         targetSdk = 36

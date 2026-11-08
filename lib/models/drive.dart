@@ -13,14 +13,20 @@ class Drive {
   final String? startPlace;
   final String? endPlace;
   final double? distanceKm;
+
   /// 함께 운행한 사람 태그(칩에서 고른 값 또는 직접입력 텍스트). 여러 명 선택 가능.
   final List<String> companionTags;
   final PurposeTag purposeTag;
   final EmotionCategory moodTag;
   final String? moodDetail;
   final String? memo;
-  /// 앱 내부 저장소에 복사된 사진 경로. 최대 2장.
+
+  /// 앱 내부 저장소에 복사된 사진 경로. 최대 3장.
   final List<String> photoPaths;
+
+  /// 입력 화면에서 유튜브로 찾아본 노래 제목(선택). 상세 화면에서 그대로 다시
+  /// 볼 수 있도록 저장해 둔다.
+  final String? songTitle;
   final DateTime createdAt;
 
   Drive({
@@ -37,6 +43,7 @@ class Drive {
     this.moodDetail,
     this.memo,
     required this.photoPaths,
+    this.songTitle,
     required this.createdAt,
   });
 
@@ -54,6 +61,7 @@ class Drive {
     String? moodDetail,
     String? memo,
     required List<String> photoPaths,
+    String? songTitle,
     DateTime? createdAt,
   }) {
     return Drive(
@@ -70,13 +78,15 @@ class Drive {
       moodDetail: moodDetail,
       memo: memo,
       photoPaths: photoPaths,
+      songTitle: songTitle,
       createdAt: createdAt ?? DateTime.now(),
     );
   }
 
   /// 예: "서울 → 강릉", 출발지만 있으면 출발지만.
   String get routeSummary {
-    if ((startPlace == null || startPlace!.isEmpty) && (endPlace == null || endPlace!.isEmpty)) {
+    if ((startPlace == null || startPlace!.isEmpty) &&
+        (endPlace == null || endPlace!.isEmpty)) {
       return '';
     }
     if (startPlace == null || startPlace!.isEmpty) return endPlace!;
@@ -99,6 +109,7 @@ class Drive {
       'mood_detail': moodDetail,
       'memo': memo,
       'photo_paths': jsonEncode(photoPaths),
+      'song_title': songTitle,
       'created_at': createdAt.toIso8601String(),
     };
   }
@@ -112,12 +123,17 @@ class Drive {
       startPlace: map['start_place'] as String?,
       endPlace: map['end_place'] as String?,
       distanceKm: (map['distance_km'] as num?)?.toDouble(),
-      companionTags: (jsonDecode(map['companion_tags'] as String) as List<dynamic>).cast<String>(),
+      companionTags:
+          (jsonDecode(map['companion_tags'] as String) as List<dynamic>)
+              .cast<String>(),
       purposeTag: PurposeTag.fromDbValue(map['purpose_tag'] as String),
       moodTag: EmotionCategory.fromDbValue(map['mood_tag'] as String),
       moodDetail: map['mood_detail'] as String?,
       memo: map['memo'] as String?,
-      photoPaths: (jsonDecode(map['photo_paths'] as String) as List<dynamic>).cast<String>(),
+      photoPaths:
+          (jsonDecode(map['photo_paths'] as String) as List<dynamic>)
+              .cast<String>(),
+      songTitle: map['song_title'] as String?,
       createdAt: DateTime.parse(map['created_at'] as String),
     );
   }

@@ -46,3 +46,7 @@ app.*.map.json
 
 # Claude Code local session state (not project source)
 .claude/
+
+# Android signing keystore (must never be committed)
+*.jks
+*.keystore

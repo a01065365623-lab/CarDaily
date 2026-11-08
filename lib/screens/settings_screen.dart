@@ -3,6 +3,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../services/settings_service.dart';
 import '../theme/app_colors.dart';
+import 'fuel_log_list_screen.dart';
+import 'plan_list_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -12,7 +14,6 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  bool _introMusicEnabled = true;
   final _vehicleNicknameController = TextEditingController();
   bool _loading = true;
 
@@ -29,19 +30,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _load() async {
-    final enabled = await SettingsService.isIntroMusicEnabled();
     final nickname = await SettingsService.getVehicleNickname();
     if (!mounted) return;
     setState(() {
-      _introMusicEnabled = enabled;
       _vehicleNicknameController.text = nickname ?? '';
       _loading = false;
     });
-  }
-
-  Future<void> _toggleIntroMusic(bool value) async {
-    setState(() => _introMusicEnabled = value);
-    await SettingsService.setIntroMusicEnabled(value);
   }
 
   Future<void> _saveVehicleNickname() async {
@@ -130,12 +124,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     borderRadius: BorderRadius.circular(14),
                     border: Border.all(color: AppColors.divider),
                   ),
-                  child: SwitchListTile(
-                    value: _introMusicEnabled,
-                    onChanged: _toggleIntroMusic,
-                    activeColor: AppColors.amber,
+                  child: ListTile(
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const FuelLogListScreen()),
+                    ),
                     title: Text(
-                      l10n.settingsIntroMusicTitle,
+                      l10n.settingsFuelLogTitle,
                       style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
@@ -143,9 +137,36 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                     ),
                     subtitle: Text(
-                      l10n.settingsIntroMusicSubtitle,
+                      l10n.settingsFuelLogSubtitle,
                       style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
                     ),
+                    trailing: const Icon(Icons.chevron_right_rounded, color: AppColors.textSecondary),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.cardBackground,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: AppColors.divider),
+                  ),
+                  child: ListTile(
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const PlanListScreen()),
+                    ),
+                    title: Text(
+                      l10n.settingsPlanListTitle,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    subtitle: Text(
+                      l10n.settingsPlanListSubtitle,
+                      style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                    ),
+                    trailing: const Icon(Icons.chevron_right_rounded, color: AppColors.textSecondary),
                   ),
                 ),
               ],

@@ -4,18 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class SettingsService {
   SettingsService._();
 
-  static const String _keyIntroMusicEnabled = 'introMusicEnabled';
   static const String _keyVehicleNickname = 'vehicleNickname';
-
-  static Future<bool> isIntroMusicEnabled() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(_keyIntroMusicEnabled) ?? true;
-  }
-
-  static Future<void> setIntroMusicEnabled(bool enabled) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_keyIntroMusicEnabled, enabled);
-  }
 
   static Future<String?> getVehicleNickname() async {
     final prefs = await SharedPreferences.getInstance();

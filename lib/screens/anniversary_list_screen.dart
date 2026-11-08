@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:intl/intl.dart';
 
 import '../db/database_helper.dart';
 import '../models/anniversary.dart';
 import '../theme/app_colors.dart';
 import '../utils/date_formatter.dart';
+import 'anniversary_detail_screen.dart';
 import 'anniversary_input_screen.dart';
 
 /// 매년 반복되는 차량 기념일/마일스톤 목록을 관리하는 화면.
@@ -42,21 +44,40 @@ class _AnniversaryListScreenState extends State<AnniversaryListScreen> {
     if (saved == true) _load();
   }
 
+  Future<void> _openDetail(Anniversary anniversary) async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder:
+            (_) => AnniversaryDetailScreen(
+              anniversary: anniversary,
+              occurrenceDate: anniversary.resolveOccurrenceDate(DateTime.now()),
+            ),
+      ),
+    );
+    _load();
+  }
+
   Future<bool> _confirmDelete() async {
     final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.anniversaryListDeleteDialogTitle),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l10n.commonCancelButton)),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            style: TextButton.styleFrom(foregroundColor: Colors.red.shade600),
-            child: Text(l10n.dailyDetailDialogDelete),
+      builder:
+          (ctx) => AlertDialog(
+            title: Text(l10n.anniversaryListDeleteDialogTitle),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, false),
+                child: Text(l10n.commonCancelButton),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, true),
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.red.shade600,
+                ),
+                child: Text(l10n.dailyDetailDialogDelete),
+              ),
+            ],
           ),
-        ],
-      ),
     );
     return confirmed ?? false;
   }
@@ -66,7 +87,13 @@ class _AnniversaryListScreenState extends State<AnniversaryListScreen> {
     await DatabaseHelper.instance.deleteAnniversary(anniversary.id!);
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context)!.anniversaryListSnackbarDeleted(anniversary.title))),
+      SnackBar(
+        content: Text(
+          AppLocalizations.of(
+            context,
+          )!.anniversaryListSnackbarDeleted(anniversary.title),
+        ),
+      ),
     );
     _load();
   }
@@ -83,32 +110,42 @@ class _AnniversaryListScreenState extends State<AnniversaryListScreen> {
         foregroundColor: AppColors.textPrimary,
         elevation: 0,
       ),
-      body: _loading
-          ? const Center(child: CircularProgressIndicator())
-          : _anniversaries.isEmpty
+      body:
+          _loading
+              ? const Center(child: CircularProgressIndicator())
+              : _anniversaries.isEmpty
               ? const _EmptyState()
               : ListView.separated(
-                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-                  itemCount: _anniversaries.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 10),
-                  itemBuilder: (context, index) {
-                    final anniversary = _anniversaries[index];
-                    return Dismissible(
-                      key: ValueKey(anniversary.id ?? index),
-                      direction: DismissDirection.endToStart,
-                      background: Container(
-                        alignment: Alignment.centerRight,
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        decoration: BoxDecoration(
-                          color: Colors.red.shade300,
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: const Icon(Icons.delete_outline_rounded, color: Colors.white),
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+                itemCount: _anniversaries.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 10),
+                itemBuilder: (context, index) {
+                  final anniversary = _anniversaries[index];
+                  return Dismissible(
+                    key: ValueKey(anniversary.id ?? index),
+                    direction: DismissDirection.endToStart,
+                    background: Container(
+                      alignment: Alignment.centerRight,
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      decoration: BoxDecoration(
+                        color: Colors.red.shade300,
+                        borderRadius: BorderRadius.circular(14),
                       ),
-                      confirmDismiss: (_) => _confirmDelete(),
-                      onDismissed: (_) => _delete(anniversary),
+                      child: const Icon(
+                        Icons.delete_outline_rounded,
+                        color: Colors.white,
+                      ),
+                    ),
+                    confirmDismiss: (_) => _confirmDelete(),
+                    onDismissed: (_) => _delete(anniversary),
+                    child: InkWell(
+                      onTap: () => _openDetail(anniversary),
+                      borderRadius: BorderRadius.circular(14),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 14,
+                        ),
                         decoration: BoxDecoration(
                           color: AppColors.cardBackground,
                           borderRadius: BorderRadius.circular(14),
@@ -116,7 +153,10 @@ class _AnniversaryListScreenState extends State<AnniversaryListScreen> {
                         ),
                         child: Row(
                           children: [
-                            Text(anniversary.emoji, style: const TextStyle(fontSize: 26)),
+                            Text(
+                              anniversary.emoji,
+                              style: const TextStyle(fontSize: 26),
+                            ),
                             const SizedBox(width: 14),
                             Expanded(
                               child: Column(
@@ -132,10 +172,21 @@ class _AnniversaryListScreenState extends State<AnniversaryListScreen> {
                                   ),
                                   const SizedBox(height: 2),
                                   Text(
-                                    l10n.anniversaryListRepeatsYearlyPrefix(
-                                      formatMonthDay(anniversary.date, localeTag),
+                                    anniversary.isRecurring
+                                        ? l10n
+                                            .anniversaryListRepeatsYearlyPrefix(
+                                              formatMonthDay(
+                                                anniversary.date,
+                                                localeTag,
+                                              ),
+                                            )
+                                        : DateFormat.yMMMd(localeTag).format(
+                                          DateTime.parse(anniversary.date),
+                                        ),
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      color: AppColors.textSecondary,
                                     ),
-                                    style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
                                   ),
                                 ],
                               ),
@@ -143,9 +194,10 @@ class _AnniversaryListScreenState extends State<AnniversaryListScreen> {
                           ],
                         ),
                       ),
-                    );
-                  },
-                ),
+                    ),
+                  );
+                },
+              ),
       floatingActionButton: FloatingActionButton(
         onPressed: _add,
         backgroundColor: AppColors.amber,
@@ -167,7 +219,11 @@ class _EmptyState extends StatelessWidget {
         child: Text(
           AppLocalizations.of(context)!.anniversaryListEmptyMessage,
           textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 14, color: AppColors.textSecondary, height: 1.5),
+          style: const TextStyle(
+            fontSize: 14,
+            color: AppColors.textSecondary,
+            height: 1.5,
+          ),
         ),
       ),
     );

@@ -1,17 +1,23 @@
 {
   "@@locale": "ko",
-
-  "appTitle": "카데일리",
-  "@appTitle": { "description": "OS 작업 전환 화면 등에 노출되는 앱 이름" },
-
+  "appTitle": "CarDaily(카데일리)",
+  "@appTitle": {
+    "description": "OS 작업 전환 화면 등에 노출되는 앱 이름"
+  },
   "commonSaveButton": "저장하기",
-  "@commonSaveButton": { "description": "일반 저장 버튼 (기록/기념일 입력 화면 공용)" },
+  "@commonSaveButton": {
+    "description": "일반 저장 버튼 (기록/기념일 입력 화면 공용)"
+  },
   "commonCancelButton": "취소",
+  "commonEditButton": "수정",
+  "@commonEditButton": {
+    "description": "읽기 전용 상세 화면에서 입력 화면으로 이동하는 수정 버튼 (운행/병원/기름 기록 공용)"
+  },
   "commonDirectInputChip": "직접입력",
-  "@commonDirectInputChip": { "description": "동행/기분 선택 칩 중 '직접 입력하기' 옵션" },
-
+  "@commonDirectInputChip": {
+    "description": "동행/기분 선택 칩 중 '직접 입력하기' 옵션"
+  },
   "splashIntroSkipButton": "건너뛰기",
-
   "introMessage1": "오늘의 드라이브도 안전하게, 그리고 즐겁게 🚗",
   "introMessage2": "어디로 가든, 그 길 위의 이야기를 남겨봐요",
   "introMessage3": "함께한 사람, 스쳐간 풍경, 오늘의 이유까지 ✨",
@@ -24,25 +30,35 @@
   "introMessage10": "누군가와 함께한 오늘의 드라이브, 소중히 남겨봐요",
   "introMessage11": "빠른 길도 좋지만, 가끔은 돌아가는 길도 나쁘지 않아요",
   "introMessage12": "당신의 오늘 운행도 응원해요, 안전하게 즐겁게 🍀",
-
-  "homeCalendarAppBarTitle": "카데일리",
+  "homeCalendarAppBarTitle": "CarDaily(카데일리)",
   "homeCalendarAppBarTitleWithNickname": "{nickname}의 드라이브 일지",
   "@homeCalendarAppBarTitleWithNickname": {
     "description": "설정에서 마이카 애칭을 등록했을 때 표시되는 앱바 타이틀",
-    "placeholders": { "nickname": { "type": "String" } }
+    "placeholders": {
+      "nickname": {
+        "type": "String"
+      }
+    }
   },
   "homeCalendarAnniversaryTooltip": "기념일/마일스톤",
+  "homeCalendarFuelLogTooltip": "기름 먹은 날",
   "homeCalendarStatsTooltip": "통계",
   "homeCalendarSettingsTooltip": "설정",
-  "homeCalendarHintText": "날짜를 탭하면 그날의 운행 기록이나 정비 예약을 볼 수 있어요",
+  "homeCalendarHintText": "날짜를 탭하면 그날의 운행 기록이나 병원 예약을 볼 수 있어요",
   "homeCalendarLegendLogged": "운행 기록",
-  "homeCalendarLegendPlanned": "정비 예약",
+  "homeCalendarLegendPlanned": "병원 예약 (다가오는 일정)",
+  "homeCalendarLegendPlanVisited": "병원 간 날",
+  "homeCalendarLegendFuel": "기름 먹은 날",
+  "homeCalendarHospitalVisitFabLabel": "병원 간 날",
   "homeCalendarFabLabel": "오늘의 운행",
-
   "recordInputAppBarTitle": "{date} 기록",
   "@recordInputAppBarTitle": {
     "description": "기록 입력 화면 앱바 타이틀. date는 이미 yyyy-MM-dd 형식으로 포맷된 날짜 문자열",
-    "placeholders": { "date": { "type": "String" } }
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
   },
   "recordInputSectionRoute": "출발지 · 도착지",
   "recordInputStartPlaceHint": "출발지를 입력해보세요",
@@ -62,57 +78,85 @@
   "recordInputMoodCustomHint": "예: 첫 드라이브, 홧김에처럼 오늘의 이유를 적어보세요",
   "recordInputSectionMemo": "오늘의 이야기",
   "recordInputMemoHint": "어디를 어떻게 다녀왔는지, 어떤 이야기가 있었는지 남겨보세요",
+  "recordInputSectionSong": "오늘 듣고 싶은 노래",
+  "recordInputSongHint": "노래 제목이나 가수를 적어보세요 (예: 드라이브 노래)",
+  "recordInputYoutubeTooltip": "유튜브에서 찾아보기",
+  "recordInputYoutubeSearchQuery": "드라이브 듣기 좋은 음악",
   "recordInputSnackbarNeedRoute": "출발지 또는 도착지를 입력해주세요",
   "recordInputSavedSnackbarMessage": "운행 기록이 저장됐어요!",
-
-  "dailyDetailSnackbarPlanSaved": "정비 예약이 저장되었습니다",
-  "dailyDetailSnackbarPlanReminder": "정비 예약을 잊지 마세요!",
-  "dailyDetailCancelPlanDialogTitle": "정비 예약 취소",
-  "dailyDetailCancelPlanDialogContent": "이 정비 예약을 취소하시겠어요?",
+  "dailyDetailSnackbarPlanSaved": "병원 예약이 저장됐어요",
+  "dailyDetailSnackbarPlanReminder": "병원 다녀올 준비, 잊지 마세요!",
+  "dailyDetailCancelPlanDialogTitle": "병원 예약 취소",
+  "dailyDetailCancelPlanDialogContent": "이 병원 예약을 취소하시겠어요?",
   "dailyDetailDialogNo": "아니요",
   "dailyDetailDialogConfirmCancel": "취소하기",
   "dailyDetailDeleteLogDialogTitle": "기록 삭제",
   "dailyDetailDeleteLogDialogContent": "{name} 기록을 삭제할까요?",
   "@dailyDetailDeleteLogDialogContent": {
-    "placeholders": { "name": { "type": "String" } }
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
   },
   "dailyDetailDialogDelete": "삭제",
   "dailyDetailDistanceTotalLabel": "이날의 총 운행거리",
-  "dailyDetailPlannedSectionTitle": "예정된 정비",
-  "dailyDetailRemindButton": "정비 잊지말아요",
-  "dailyDetailCancelPlanButton": "정비 취소하기",
-  "dailyDetailAddPlanCta": "이 날 정비를 예약할까요?",
+  "dailyDetailPlannedSectionTitle": "다녀올 병원",
+  "dailyDetailVisitedSectionTitle": "다녀온 병원",
+  "dailyDetailRemindButton": "병원 잊지말아요",
+  "dailyDetailCancelPlanButton": "예약 취소하기",
+  "dailyDetailAddPlanCta": "이 날 병원에 다녀올까요?",
+  "dailyDetailAddPlanCtaFuture": "오늘의 약속",
   "dailyDetailLastYearTitle": "🗓️ 작년 오늘은…",
   "dailyDetailAnniversaryTitle": "{emoji} 오늘은 {title}이에요!",
   "@dailyDetailAnniversaryTitle": {
     "placeholders": {
-      "emoji": { "type": "String" },
-      "title": { "type": "String" }
+      "emoji": {
+        "type": "String"
+      },
+      "title": {
+        "type": "String"
+      }
     }
   },
   "dailyDetailDistanceTagLabel": "{value}km",
   "@dailyDetailDistanceTagLabel": {
-    "placeholders": { "value": { "type": "String" } }
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
   },
   "dailyDetailResetDayTooltip": "전체 삭제",
   "dailyDetailResetDayDialogTitle": "이 날의 기록을 모두 삭제할까요?",
   "dailyDetailResetDayDialogContent": "운행 {driveCount}건, 사진 {photoCount}장이 함께 삭제됩니다",
   "@dailyDetailResetDayDialogContent": {
     "placeholders": {
-      "driveCount": { "type": "int" },
-      "photoCount": { "type": "int" }
+      "driveCount": {
+        "type": "int"
+      },
+      "photoCount": {
+        "type": "int"
+      }
     }
   },
   "dailyDetailResetDaySnackbarMessage": "기록이 초기화되었어요",
-
+  "dailyDetailShareTooltip": "공유",
+  "dailyDetailShareEmptyMessage": "공유할 기록이 없어요",
+  "dailyDetailShareFailedMessage": "공유 이미지를 만들지 못했어요",
+  "photoGalleryDownloadTooltip": "갤러리에 저장",
+  "photoGalleryDownloadSuccessMessage": "사진이 갤러리에 저장됐어요",
+  "photoGalleryDownloadFailedMessage": "사진을 저장하지 못했어요",
+  "photoGalleryDownloadPermissionDeniedMessage": "갤러리 저장 권한이 필요해요",
   "settingsAppBarTitle": "설정",
   "settingsVehicleNicknameTitle": "마이카 애칭",
   "settingsVehicleNicknameSubtitle": "내 차에 이름을 붙여보세요",
   "settingsVehicleNicknameHint": "예: 콩이, 흰둥이",
   "settingsVehicleNicknameSaved": "애칭이 저장됐어요",
-  "settingsIntroMusicTitle": "인트로 음악",
-  "settingsIntroMusicSubtitle": "앱을 열 때 인트로 화면에서 배경음악을 재생해요",
-
+  "settingsFuelLogTitle": "기름 먹은 날 ⛽",
+  "settingsFuelLogSubtitle": "애마 주유 기록을 남기고 확인해보세요",
+  "settingsPlanListTitle": "병원 예약 관리 🏥",
+  "settingsPlanListSubtitle": "다가오는 병원 예약을 확인하고 관리해보세요",
   "statsAppBarTitle": "통계",
   "statsPeriodWeekly": "최근 7일",
   "statsPeriodMonthly": "최근 30일",
@@ -126,59 +170,148 @@
   "statsTimesCount": "{count}회",
   "@statsTimesCount": {
     "description": "목적/기분별 횟수 표시 (예: 3회)",
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
-
-  "planInputAppBarTitle": "정비 예약 등록",
+  "statsChartFuelCostTitle": "기름 먹은 날 · 월별 총 주유 금액",
+  "statsChartFuelCountTitle": "기름 먹은 날 · 월별 주유 횟수",
+  "statsChartFuelByTypeTitle": "기름 먹은 날 · 연료 종류별 금액",
+  "statsChartHospitalTitle": "병원 간 날",
+  "statsHospitalVisitCountLabel": "방문 횟수",
+  "statsHospitalLastVisitLabel": "최근 방문일",
+  "statsHospitalNoVisitLabel": "아직 방문 기록이 없어요",
+  "statsHospitalTypeDistributionLabel": "유형별 분포",
+  "planInputAppBarTitle": "병원 내원",
   "planInputSectionDate": "날짜",
-  "planInputSectionTitle": "정비 항목",
+  "planInputSectionType": "유형",
+  "planTypeMaintenance": "정비",
+  "planTypeCarWash": "세차",
+  "planTypeInspection": "검사",
+  "planTypeEtc": "기타",
+  "planInputSectionTitle": "다녀올 이유",
   "planInputTitleHint": "예: 엔진오일 교체, 타이어 점검",
-  "planInputSectionCompanion": "정비소 (선택)",
-  "planInputCompanionHint": "예: OO카센터, OO타이어",
+  "planInputSectionCompanion": "병원 이름 (선택)",
+  "planInputCompanionHint": "예: OO자동차병원, OO타이어",
   "planInputSectionMemo": "메모 (선택)",
-  "planInputMemoHint": "정비에 대해 남기고 싶은 이야기가 있나요",
-  "planInputSaveButton": "정비 예약 저장하기",
-  "planInputSnackbarNeedTitle": "정비 항목을 입력해주세요",
-  "planInputSnackbarSaveFailed": "정비 예약 저장에 실패했어요: {error}",
+  "planInputMemoHint": "다녀올 병원에 대해 남기고 싶은 이야기가 있나요",
+  "planInputSaveButton": "저장하기",
+  "planInputSnackbarNeedTitle": "다녀올 이유를 입력해주세요",
+  "planInputSnackbarSaveFailed": "병원 예약 저장에 실패했어요: {error}",
   "@planInputSnackbarSaveFailed": {
-    "placeholders": { "error": { "type": "String" } }
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
   },
-
   "anniversaryInputAppBarTitle": "기념일/마일스톤 추가",
   "anniversaryInputSectionEmoji": "이모지",
   "anniversaryInputSectionTitle": "제목",
   "anniversaryInputTitleHint": "예: 차량 구매일, 10,000km 돌파",
-  "anniversaryInputSectionDate": "날짜 (매년 반복)",
-  "anniversaryInputDatePickerHelpText": "몇 월 며칠인가요? (매년 반복)",
+  "anniversaryInputSectionDate": "날짜 (여러 개 선택 가능)",
+  "anniversaryInputSingleModeLabel": "개별 선택",
+  "anniversaryInputRangeModeLabel": "범위 선택",
+  "anniversaryInputSingleModeHelp": "달력에서 날짜를 하나씩 탭해 선택/해제하세요",
+  "anniversaryInputRangeModeHelp": "시작일과 종료일을 순서대로 탭하면 그 사이 날짜가 모두 선택돼요",
   "anniversaryInputSectionMemo": "메모 (선택)",
   "anniversaryInputMemoHint": "이 날에 대해 남기고 싶은 이야기가 있나요",
   "anniversaryInputSnackbarNeedTitle": "제목을 입력해주세요",
-
+  "anniversaryInputSnackbarNeedDate": "날짜를 하나 이상 선택해주세요",
   "anniversaryListAppBarTitle": "기념일/마일스톤 관리",
   "anniversaryListDeleteDialogTitle": "이 항목을 삭제할까요?",
   "anniversaryListSnackbarDeleted": "{title}을(를) 삭제했어요",
   "@anniversaryListSnackbarDeleted": {
-    "placeholders": { "title": { "type": "String" } }
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
   },
   "anniversaryListEmptyMessage": "🚗 아직 등록된 기념일/마일스톤이 없어요\n오른쪽 아래 + 버튼으로 추가해보세요",
   "anniversaryListRepeatsYearlyPrefix": "매년 {date}",
+  "planListAppBarTitle": "병원 예약 관리",
+  "planListEmptyMessage": "🏥 아직 등록된 병원 예약이 없어요\n오른쪽 아래 + 버튼으로 추가해보세요",
+  "planListSnackbarDeleted": "{title} 예약을 취소했어요",
+  "@planListSnackbarDeleted": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
   "@anniversaryListRepeatsYearlyPrefix": {
     "description": "date는 이미 현지화된 '8월 27일' 형태의 월/일 문자열",
-    "placeholders": { "date": { "type": "String" } }
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
   },
-
+  "fuelLogListAppBarTitle": "기름 먹은 날",
+  "fuelLogListEmptyMessage": "⛽ 아직 기록된 주유가 없어요\n오른쪽 아래 + 버튼으로 애마 밥을 챙겨주세요",
+  "fuelLogListDeleteDialogTitle": "이 기록을 삭제할까요?",
+  "fuelLogListSnackbarDeleted": "기름 먹은 날 기록을 삭제했어요",
+  "fuelLogListCostAmount": "{cost}원",
+  "@fuelLogListCostAmount": {
+    "description": "주유 금액. cost는 이미 천단위 구분자가 붙은 문자열",
+    "placeholders": {
+      "cost": {
+        "type": "String"
+      }
+    }
+  },
+  "fuelLogInputAppBarTitle": "기름 먹은 날 기록하기",
+  "fuelLogInputSectionDate": "날짜",
+  "fuelLogInputSectionFuelType": "연료 종류",
+  "fuelTypeGasoline": "기름",
+  "fuelTypeElectric": "전기",
+  "fuelTypeGas": "가스",
+  "fuelTypeHydrogen": "수소",
+  "fuelTypeEtc": "기타",
+  "fuelUnitLiter": "L",
+  "fuelUnitKwh": "kWh",
+  "fuelUnitKg": "kg",
+  "fuelLogInputSectionCost": "주유 금액",
+  "fuelLogInputCostHint": "예: 70000",
+  "fuelLogInputSectionAmountWithUnit": "충전/주유량 ({unit}, 선택)",
+  "@fuelLogInputSectionAmountWithUnit": {
+    "description": "연료 종류에 따라 단위(L/kWh/kg)가 바뀌는 충전/주유량 입력란 라벨",
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "fuelLogInputSectionAmountNoUnit": "충전/주유량 (선택)",
+  "@fuelLogInputSectionAmountNoUnit": {
+    "description": "연료 종류가 '기타'일 때, 단위 없이 숫자만 입력받는 충전/주유량 라벨"
+  },
+  "fuelLogInputAmountHint": "예: 45.5",
+  "fuelLogInputSectionMemo": "메모 (선택)",
+  "fuelLogInputMemoHint": "애마 기름 먹은 날, 남기고 싶은 이야기가 있나요",
+  "fuelLogInputSaveButton": "기름 먹은 날 저장하기",
+  "fuelLogInputSnackbarNeedCost": "주유 금액을 입력해주세요",
+  "fuelLogInputSnackbarSaveFailed": "저장에 실패했어요: {error}",
+  "@fuelLogInputSnackbarSaveFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "companionTagAlone": "혼자",
   "companionTagFriend": "친구",
   "companionTagFamily": "가족",
   "companionTagPartner": "연인",
   "companionTagCoworker": "직장동료",
-
   "purposeTagTrip": "여행",
   "purposeTagDate": "데이트",
   "purposeTagCommute": "출퇴근",
   "purposeTagDrive": "드라이브",
   "purposeTagEtc": "기타",
-
   "emotionCategoryJoy": "즐거움",
   "emotionCategoryCelebration": "축하",
   "emotionCategoryComfort": "위로",
@@ -187,7 +320,6 @@
   "emotionCategoryStress": "스트레스",
   "emotionCategoryBoredom": "지루함",
   "emotionCategoryNone": "그냥",
-
   "shopLinkConfirmTitle": "이동할 링크",
   "shopLinkGoButton": "이동",
   "shopLinkOpenFailed": "링크를 열 수 없어요",
@@ -196,7 +328,6 @@
   "shopPlatformNaver": "네이버",
   "shopPlatformAmazon": "아마존",
   "shopSideDishAction": "관련 상품 보기",
-
   "shopQueryTrip": "여행 준비물",
   "shopQueryDate": "드라이브 데이트 선물",
   "shopQueryCommute": "차량용품",

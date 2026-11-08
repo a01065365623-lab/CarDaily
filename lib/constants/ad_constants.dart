@@ -8,7 +8,7 @@
 /// 실제 광고 단위 ID로 교체할 것. 앱 ID는
 /// android/app/src/main/AndroidManifest.xml의 com.google.android.gms.ads.APPLICATION_ID
 /// 메타데이터에도 등록돼 있으므로 함께 바꿔야 한다.
-const bool kUseTestAdUnitIds = true;
+const bool kUseTestAdUnitIds = false;
 
 /// AdMob 광고 단위 ID 설정.
 class AdConstants {
@@ -17,14 +17,14 @@ class AdConstants {
   // ── 배너 광고 단위 ID ──
   static const String _bannerTestAdUnitId = 'ca-app-pub-3940256099942544/6300978111'; // Google 테스트 배너 ID
   // TODO: 실제 배너 광고 단위 ID로 교체
-  static const String _bannerRealAdUnitId = 'ca-app-pub-REPLACE_ME/REPLACE_ME';
+  static const String _bannerRealAdUnitId = 'ca-app-pub-9075706979713157/1675089375';
 
   static String get bannerAdUnitId => kUseTestAdUnitIds ? _bannerTestAdUnitId : _bannerRealAdUnitId;
 
   // ── 전면 광고 단위 ID ──
   static const String _interstitialTestAdUnitId = 'ca-app-pub-3940256099942544/1033173712'; // Google 테스트 전면 ID
   // TODO: 실제 전면 광고 단위 ID로 교체
-  static const String _interstitialRealAdUnitId = 'ca-app-pub-REPLACE_ME/REPLACE_ME';
+  static const String _interstitialRealAdUnitId = 'ca-app-pub-9075706979713157/9362007706';
 
   static String get interstitialAdUnitId => kUseTestAdUnitIds ? _interstitialTestAdUnitId : _interstitialRealAdUnitId;
 }

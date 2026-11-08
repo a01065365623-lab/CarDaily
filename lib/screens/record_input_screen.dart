@@ -12,48 +12,84 @@ import '../models/purpose_tag.dart';
 import '../theme/app_colors.dart';
 import '../utils/date_formatter.dart';
 import '../utils/photo_storage.dart';
+import '../utils/youtube_launcher.dart';
 import '../widgets/dashed_border_box.dart';
+import 'photo_gallery_screen.dart';
 
-/// [RecordInputScreen]이 저장 완료 시 반환하는 결과. 호출한 화면(캘린더/일자 상세)에서
-/// "관련 상품 보기" 스낵바를 띄울 때 [shopQuery]를 검색어로 쓴다.
-class RecordSaveResult {
-  final String shopQuery;
-
-  const RecordSaveResult({required this.shopQuery});
-}
-
-/// 하루 운행 기록을 입력하는 화면. [date]에 저장된다.
+/// 하루 운행 기록을 입력하거나([existingDrive]가 null) 수정하는
+/// ([existingDrive]가 있음) 화면. [date]에 저장된다.
 class RecordInputScreen extends StatefulWidget {
   final DateTime date;
+  final Drive? existingDrive;
 
-  const RecordInputScreen({super.key, required this.date});
+  const RecordInputScreen({super.key, required this.date, this.existingDrive});
 
   @override
   State<RecordInputScreen> createState() => _RecordInputScreenState();
 }
 
+/// "HH:mm" 문자열을 TimeOfDay로 되돌린다. 수정 화면에서 저장된 시각을 다시
+/// 채워 넣을 때 쓴다.
+TimeOfDay? _parseTime(String? value) {
+  if (value == null) return null;
+  final parts = value.split(':');
+  if (parts.length != 2) return null;
+  final hour = int.tryParse(parts[0]);
+  final minute = int.tryParse(parts[1]);
+  if (hour == null || minute == null) return null;
+  return TimeOfDay(hour: hour, minute: minute);
+}
+
 class _RecordInputScreenState extends State<RecordInputScreen> {
-  static const int _maxPhotos = 2;
+  static const int _maxPhotos = 3;
 
-  final _startPlaceController = TextEditingController();
-  final _endPlaceController = TextEditingController();
-  final _distanceController = TextEditingController();
-  TimeOfDay? _startTime;
-  TimeOfDay? _endTime;
-  final List<String> _photoPaths = [];
+  late final _startPlaceController = TextEditingController(
+    text: widget.existingDrive?.startPlace ?? '',
+  );
+  late final _endPlaceController = TextEditingController(
+    text: widget.existingDrive?.endPlace ?? '',
+  );
+  late final _distanceController = TextEditingController(
+    text: widget.existingDrive?.distanceKm?.toString() ?? '',
+  );
+  late TimeOfDay? _startTime = _parseTime(widget.existingDrive?.startTime);
+  late TimeOfDay? _endTime = _parseTime(widget.existingDrive?.endTime);
+  late final List<String> _photoPaths = List<String>.from(
+    widget.existingDrive?.photoPaths ?? [],
+  );
 
-  final Set<CompanionTag> _companionChips = {};
-  bool _companionIsCustom = false;
-  final _companionCustomController = TextEditingController();
+  late final Set<CompanionTag> _companionChips = {
+    for (final raw in widget.existingDrive?.companionTags ?? const [])
+      if (CompanionTag.values.any((t) => t.label == raw))
+        CompanionTag.values.firstWhere((t) => t.label == raw),
+  };
+  late bool _companionIsCustom = (widget.existingDrive?.companionTags ??
+          const [])
+      .any((raw) => !CompanionTag.values.any((t) => t.label == raw));
+  late final _companionCustomController = TextEditingController(
+    text: (widget.existingDrive?.companionTags ?? const [])
+        .where((raw) => !CompanionTag.values.any((t) => t.label == raw))
+        .join(', '),
+  );
 
-  PurposeTag _purposeTag = PurposeTag.drive;
+  late PurposeTag _purposeTag =
+      widget.existingDrive?.purposeTag ?? PurposeTag.drive;
 
-  EmotionCategory _moodCategory = EmotionCategory.joy;
-  bool _moodIsCustom = false;
-  final _moodDetailController = TextEditingController();
+  late bool _moodIsCustom = widget.existingDrive?.moodDetail != null;
+  late EmotionCategory _moodCategory =
+      widget.existingDrive?.moodTag ?? EmotionCategory.joy;
+  late final _moodDetailController = TextEditingController(
+    text: widget.existingDrive?.moodDetail ?? '',
+  );
 
-  final _memoController = TextEditingController();
+  late final _memoController = TextEditingController(
+    text: widget.existingDrive?.memo ?? '',
+  );
+  late final _songTitleController = TextEditingController(
+    text: widget.existingDrive?.songTitle ?? '',
+  );
   bool _saving = false;
+  bool _isOpeningPhotoViewer = false;
 
   @override
   void dispose() {
@@ -63,6 +99,7 @@ class _RecordInputScreenState extends State<RecordInputScreen> {
     _companionCustomController.dispose();
     _moodDetailController.dispose();
     _memoController.dispose();
+    _songTitleController.dispose();
     super.dispose();
   }
 
@@ -100,12 +137,18 @@ class _RecordInputScreenState extends State<RecordInputScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: const Icon(Icons.photo_camera_outlined, color: AppColors.amberDark),
+                leading: const Icon(
+                  Icons.photo_camera_outlined,
+                  color: AppColors.amberDark,
+                ),
                 title: Text(l10n.recordInputCameraOption),
                 onTap: () => Navigator.pop(ctx, ImageSource.camera),
               ),
               ListTile(
-                leading: const Icon(Icons.photo_library_outlined, color: AppColors.amberDark),
+                leading: const Icon(
+                  Icons.photo_library_outlined,
+                  color: AppColors.amberDark,
+                ),
                 title: Text(l10n.recordInputGalleryOption),
                 onTap: () => Navigator.pop(ctx, ImageSource.gallery),
               ),
@@ -119,21 +162,29 @@ class _RecordInputScreenState extends State<RecordInputScreen> {
     final remaining = _maxPhotos - _photoPaths.length;
     if (remaining <= 0) return;
 
-    final picked = source == ImageSource.camera
-        ? await _pickSinglePhoto()
-        : await _pickMultiplePhotos(remaining);
+    final picked =
+        source == ImageSource.camera
+            ? await _pickSinglePhoto()
+            : await _pickMultiplePhotos(remaining);
     if (picked.isEmpty || !mounted) return;
     setState(() => _photoPaths.addAll(picked));
   }
 
   Future<List<String>> _pickSinglePhoto() async {
-    final file = await ImagePicker().pickImage(source: ImageSource.camera, maxWidth: 1600, imageQuality: 85);
+    final file = await ImagePicker().pickImage(
+      source: ImageSource.camera,
+      maxWidth: 1600,
+      imageQuality: 85,
+    );
     if (file == null) return [];
     return [await copyImageToAppStorage(file.path)];
   }
 
   Future<List<String>> _pickMultiplePhotos(int remaining) async {
-    final files = await ImagePicker().pickMultiImage(maxWidth: 1600, imageQuality: 85);
+    final files = await ImagePicker().pickMultiImage(
+      maxWidth: 1600,
+      imageQuality: 85,
+    );
     if (files.isEmpty) return [];
     final taken = files.take(remaining);
     final savedPaths = <String>[];
@@ -147,6 +198,26 @@ class _RecordInputScreenState extends State<RecordInputScreen> {
     final path = _photoPaths[index];
     setState(() => _photoPaths.removeAt(index));
     await deleteImageFile(path);
+  }
+
+  /// 사진 하나를 탭하면 풀스크린 뷰어(핀치 줌 + 좌우 스와이프, 다운로드 버튼
+  /// 포함)를 연다.
+  Future<void> _openPhotoViewer(int index) async {
+    if (_isOpeningPhotoViewer) return;
+    _isOpeningPhotoViewer = true;
+    try {
+      await Navigator.of(context).push(
+        MaterialPageRoute(
+          builder:
+              (_) => PhotoGalleryScreen(
+                photoPaths: List<String>.from(_photoPaths),
+                initialIndex: index,
+              ),
+        ),
+      );
+    } finally {
+      _isOpeningPhotoViewer = false;
+    }
   }
 
   List<String> get _companionTags {
@@ -169,25 +240,60 @@ class _RecordInputScreenState extends State<RecordInputScreen> {
       return;
     }
     setState(() => _saving = true);
-    final drive = Drive.create(
-      date: dateKey(widget.date),
-      startTime: _formatTime(_startTime),
-      endTime: _formatTime(_endTime),
-      startPlace: startPlace.isEmpty ? null : startPlace,
-      endPlace: endPlace.isEmpty ? null : endPlace,
-      distanceKm: double.tryParse(_distanceController.text.trim()),
-      companionTags: _companionTags,
-      purposeTag: _purposeTag,
-      moodTag: _moodCategory,
-      moodDetail: _moodIsCustom
-          ? (_moodDetailController.text.trim().isEmpty ? null : _moodDetailController.text.trim())
-          : null,
-      memo: _memoController.text.trim().isEmpty ? null : _memoController.text.trim(),
-      photoPaths: _photoPaths,
-    );
-    await DatabaseHelper.instance.insertDrive(drive);
+    final moodDetail =
+        _moodIsCustom
+            ? (_moodDetailController.text.trim().isEmpty
+                ? null
+                : _moodDetailController.text.trim())
+            : null;
+    final memo =
+        _memoController.text.trim().isEmpty
+            ? null
+            : _memoController.text.trim();
+    final songTitle =
+        _songTitleController.text.trim().isEmpty
+            ? null
+            : _songTitleController.text.trim();
+    final existing = widget.existingDrive;
+    if (existing != null) {
+      final updated = Drive(
+        id: existing.id,
+        date: dateKey(widget.date),
+        startTime: _formatTime(_startTime),
+        endTime: _formatTime(_endTime),
+        startPlace: startPlace.isEmpty ? null : startPlace,
+        endPlace: endPlace.isEmpty ? null : endPlace,
+        distanceKm: double.tryParse(_distanceController.text.trim()),
+        companionTags: _companionTags,
+        purposeTag: _purposeTag,
+        moodTag: _moodCategory,
+        moodDetail: moodDetail,
+        memo: memo,
+        photoPaths: _photoPaths,
+        songTitle: songTitle,
+        createdAt: existing.createdAt,
+      );
+      await DatabaseHelper.instance.updateDrive(updated);
+    } else {
+      final drive = Drive.create(
+        date: dateKey(widget.date),
+        startTime: _formatTime(_startTime),
+        endTime: _formatTime(_endTime),
+        startPlace: startPlace.isEmpty ? null : startPlace,
+        endPlace: endPlace.isEmpty ? null : endPlace,
+        distanceKm: double.tryParse(_distanceController.text.trim()),
+        companionTags: _companionTags,
+        purposeTag: _purposeTag,
+        moodTag: _moodCategory,
+        moodDetail: moodDetail,
+        memo: memo,
+        photoPaths: _photoPaths,
+        songTitle: songTitle,
+      );
+      await DatabaseHelper.instance.insertDrive(drive);
+    }
     if (!mounted) return;
-    Navigator.of(context).pop(RecordSaveResult(shopQuery: _purposeTag.shopQuery(context)));
+    Navigator.of(context).pop(true);
   }
 
   @override
@@ -209,7 +315,10 @@ class _RecordInputScreenState extends State<RecordInputScreen> {
             controller: _startPlaceController,
             decoration: InputDecoration(
               hintText: l10n.recordInputStartPlaceHint,
-              prefixIcon: const Icon(Icons.trip_origin_rounded, color: AppColors.amberDark),
+              prefixIcon: const Icon(
+                Icons.trip_origin_rounded,
+                color: AppColors.amberDark,
+              ),
               filled: true,
               fillColor: AppColors.cardBackground,
               border: OutlineInputBorder(
@@ -223,7 +332,10 @@ class _RecordInputScreenState extends State<RecordInputScreen> {
             controller: _endPlaceController,
             decoration: InputDecoration(
               hintText: l10n.recordInputEndPlaceHint,
-              prefixIcon: const Icon(Icons.location_on_outlined, color: AppColors.amberDark),
+              prefixIcon: const Icon(
+                Icons.location_on_outlined,
+                color: AppColors.amberDark,
+              ),
               filled: true,
               fillColor: AppColors.cardBackground,
               border: OutlineInputBorder(
@@ -261,7 +373,10 @@ class _RecordInputScreenState extends State<RecordInputScreen> {
             decoration: InputDecoration(
               hintText: l10n.recordInputDistanceHint,
               suffixText: 'km',
-              prefixIcon: const Icon(Icons.route_outlined, color: AppColors.amberDark),
+              prefixIcon: const Icon(
+                Icons.route_outlined,
+                color: AppColors.amberDark,
+              ),
               filled: true,
               fillColor: AppColors.cardBackground,
               border: OutlineInputBorder(
@@ -276,7 +391,9 @@ class _RecordInputScreenState extends State<RecordInputScreen> {
             height: 84,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
-              itemCount: _photoPaths.length + (_photoPaths.length < _maxPhotos ? 1 : 0),
+              itemCount:
+                  _photoPaths.length +
+                  (_photoPaths.length < _maxPhotos ? 1 : 0),
               separatorBuilder: (_, __) => const SizedBox(width: 10),
               itemBuilder: (context, index) {
                 if (index == _photoPaths.length) {
@@ -284,20 +401,27 @@ class _RecordInputScreenState extends State<RecordInputScreen> {
                     size: 84,
                     color: AppColors.textSecondary,
                     onTap: _pickPhotos,
-                    child: const Icon(Icons.add_rounded, color: AppColors.textSecondary, size: 28),
+                    child: const Icon(
+                      Icons.add_rounded,
+                      color: AppColors.textSecondary,
+                      size: 28,
+                    ),
                   );
                 }
                 final path = _photoPaths[index];
                 return Stack(
                   clipBehavior: Clip.none,
                   children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Image.file(
-                        File(path),
-                        width: 84,
-                        height: 84,
-                        fit: BoxFit.cover,
+                    GestureDetector(
+                      onTap: () => _openPhotoViewer(index),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.file(
+                          File(path),
+                          width: 84,
+                          height: 84,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                     Positioned(
@@ -312,7 +436,11 @@ class _RecordInputScreenState extends State<RecordInputScreen> {
                             color: AppColors.woodBrown,
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(Icons.close_rounded, color: Colors.white, size: 14),
+                          child: const Icon(
+                            Icons.close_rounded,
+                            color: Colors.white,
+                            size: 14,
+                          ),
                         ),
                       ),
                     ),
@@ -332,13 +460,14 @@ class _RecordInputScreenState extends State<RecordInputScreen> {
                 return FilterChip(
                   label: Text(tag.localizedLabel(context)),
                   selected: selected,
-                  onSelected: (value) => setState(() {
-                    if (value) {
-                      _companionChips.add(tag);
-                    } else {
-                      _companionChips.remove(tag);
-                    }
-                  }),
+                  onSelected:
+                      (value) => setState(() {
+                        if (value) {
+                          _companionChips.add(tag);
+                        } else {
+                          _companionChips.remove(tag);
+                        }
+                      }),
                   selectedColor: AppColors.sage,
                   labelStyle: TextStyle(
                     color: selected ? Colors.white : AppColors.textPrimary,
@@ -355,10 +484,12 @@ class _RecordInputScreenState extends State<RecordInputScreen> {
               FilterChip(
                 label: Text(l10n.commonDirectInputChip),
                 selected: _companionIsCustom,
-                onSelected: (value) => setState(() => _companionIsCustom = value),
+                onSelected:
+                    (value) => setState(() => _companionIsCustom = value),
                 selectedColor: AppColors.sage,
                 labelStyle: TextStyle(
-                  color: _companionIsCustom ? Colors.white : AppColors.textPrimary,
+                  color:
+                      _companionIsCustom ? Colors.white : AppColors.textPrimary,
                   fontWeight: FontWeight.w600,
                 ),
                 backgroundColor: AppColors.sageBg,
@@ -391,24 +522,25 @@ class _RecordInputScreenState extends State<RecordInputScreen> {
           Wrap(
             spacing: 8,
             runSpacing: 8,
-            children: PurposeTag.values.map((tag) {
-              final selected = _purposeTag == tag;
-              return ChoiceChip(
-                label: Text(tag.localizedLabel(context)),
-                selected: selected,
-                onSelected: (_) => setState(() => _purposeTag = tag),
-                selectedColor: AppColors.route,
-                labelStyle: TextStyle(
-                  color: selected ? Colors.white : AppColors.textPrimary,
-                  fontWeight: FontWeight.w600,
-                ),
-                backgroundColor: AppColors.routeBg,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                  side: BorderSide.none,
-                ),
-              );
-            }).toList(),
+            children:
+                PurposeTag.values.map((tag) {
+                  final selected = _purposeTag == tag;
+                  return ChoiceChip(
+                    label: Text(tag.localizedLabel(context)),
+                    selected: selected,
+                    onSelected: (_) => setState(() => _purposeTag = tag),
+                    selectedColor: AppColors.route,
+                    labelStyle: TextStyle(
+                      color: selected ? Colors.white : AppColors.textPrimary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    backgroundColor: AppColors.routeBg,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      side: BorderSide.none,
+                    ),
+                  );
+                }).toList(),
           ),
           const SizedBox(height: 24),
           _SectionTitle(l10n.recordInputSectionMood),
@@ -419,13 +551,16 @@ class _RecordInputScreenState extends State<RecordInputScreen> {
               ...EmotionCategory.values.map((category) {
                 final selected = !_moodIsCustom && _moodCategory == category;
                 return ChoiceChip(
-                  label: Text('${category.emoji} ${category.localizedLabel(context)}'),
+                  label: Text(
+                    '${category.emoji} ${category.localizedLabel(context)}',
+                  ),
                   selected: selected,
-                  onSelected: (_) => setState(() {
-                    _moodCategory = category;
-                    _moodIsCustom = false;
-                    _moodDetailController.clear();
-                  }),
+                  onSelected:
+                      (_) => setState(() {
+                        _moodCategory = category;
+                        _moodIsCustom = false;
+                        _moodDetailController.clear();
+                      }),
                   selectedColor: AppColors.terracotta,
                   labelStyle: TextStyle(
                     color: selected ? Colors.white : AppColors.textPrimary,
@@ -441,10 +576,11 @@ class _RecordInputScreenState extends State<RecordInputScreen> {
               ChoiceChip(
                 label: Text(l10n.commonDirectInputChip),
                 selected: _moodIsCustom,
-                onSelected: (_) => setState(() {
-                  _moodIsCustom = true;
-                  _moodCategory = EmotionCategory.none;
-                }),
+                onSelected:
+                    (_) => setState(() {
+                      _moodIsCustom = true;
+                      _moodCategory = EmotionCategory.none;
+                    }),
                 selectedColor: AppColors.terracotta,
                 labelStyle: TextStyle(
                   color: _moodIsCustom ? Colors.white : AppColors.textPrimary,
@@ -490,6 +626,45 @@ class _RecordInputScreenState extends State<RecordInputScreen> {
               ),
             ),
           ),
+          const SizedBox(height: 24),
+          _SectionTitle(l10n.recordInputSectionSong),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _songTitleController,
+                  onChanged: (_) => setState(() {}),
+                  decoration: InputDecoration(
+                    hintText: l10n.recordInputSongHint,
+                    prefixIcon: const Icon(
+                      Icons.music_note_rounded,
+                      color: AppColors.amberDark,
+                    ),
+                    filled: true,
+                    fillColor: AppColors.cardBackground,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: AppColors.divider),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              IconButton(
+                onPressed:
+                    () => openYoutubeSearch(
+                      _songTitleController.text.trim().isEmpty
+                          ? l10n.recordInputYoutubeSearchQuery
+                          : _songTitleController.text.trim(),
+                    ),
+                icon: const Icon(Icons.play_circle_fill_rounded),
+                iconSize: 36,
+                color: AppColors.amberDark,
+                tooltip: l10n.recordInputYoutubeTooltip,
+              ),
+            ],
+          ),
           const SizedBox(height: 8),
           SizedBox(
             height: 52,
@@ -498,15 +673,27 @@ class _RecordInputScreenState extends State<RecordInputScreen> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.amber,
                 foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
               ),
-              child: _saving
-                  ? const SizedBox(
-                      width: 22,
-                      height: 22,
-                      child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5),
-                    )
-                  : Text(l10n.commonSaveButton, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+              child:
+                  _saving
+                      ? const SizedBox(
+                        width: 22,
+                        height: 22,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2.5,
+                        ),
+                      )
+                      : Text(
+                        l10n.commonSaveButton,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
             ),
           ),
         ],
@@ -520,7 +707,11 @@ class _TimePickerBox extends StatelessWidget {
   final TimeOfDay? time;
   final VoidCallback onTap;
 
-  const _TimePickerBox({required this.label, required this.time, required this.onTap});
+  const _TimePickerBox({
+    required this.label,
+    required this.time,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -536,16 +727,30 @@ class _TimePickerBox extends StatelessWidget {
         ),
         child: Row(
           children: [
-            const Icon(Icons.schedule_rounded, color: AppColors.amberDark, size: 18),
+            const Icon(
+              Icons.schedule_rounded,
+              color: AppColors.amberDark,
+              size: 18,
+            ),
             const SizedBox(width: 8),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(label, style: const TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+                  Text(
+                    label,
+                    style: const TextStyle(
+                      fontSize: 11,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
                   Text(
                     time?.format(context) ?? '--:--',
-                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
                 ],
               ),

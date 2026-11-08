@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.2+3
+version: 1.0.3+5
 
 environment:
   sdk: ^3.7.2
@@ -64,14 +64,17 @@ dependencies:
   # AdMob 배너/전면 광고
   google_mobile_ads: ^6.0.0
 
-  # 전면 광고 노출 카운터, 설정(인트로 음악 on/off) 저장용
+  # 전면 광고 노출 카운터, 설정(마이카 애칭) 저장용
   shared_preferences: ^2.5.3
 
-  # 인트로 화면 배경음악 재생
-  audioplayers: ^6.6.0
+  # 인트로 화면 영상 재생
+  video_player: ^2.9.2
 
-  # 인트로 배경음악 자동재생 전 무음/진동 모드 감지
-  sound_mode_advanced: ^4.0.0
+  # 기록 상세를 이미지로 캡처해서 공유
+  share_plus: ^12.0.2
+
+  # 사진을 기기 갤러리에 저장
+  gal: ^2.3.3
 
 dev_dependencies:
   flutter_test:
@@ -89,7 +92,7 @@ dev_dependencies:
 
 flutter_launcher_icons:
   android: true
-  ios: false
+  ios: true
   image_path: "assets/icon/icon.png"
   min_sdk_android: 21
 
@@ -108,6 +111,7 @@ flutter:
 
   assets:
     - assets/sounds/
+    - assets/videos/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

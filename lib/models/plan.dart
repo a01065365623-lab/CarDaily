@@ -1,12 +1,16 @@
-/// 아직 일어나지 않은 정비 예약. [date]는 오늘 또는 미래 날짜만 허용한다.
+import 'plan_type.dart';
+
+/// 병원 예약(또는 다녀온 기록). [date]는 과거/오늘/미래 어느 날짜든 허용한다.
 class Plan {
   final int? id;
   final String date; // yyyy-MM-dd
   final String title;
-  /// 정비소/담당자 이름(자유 텍스트, 선택 입력).
+
+  /// 병원(정비소)/담당자 이름(자유 텍스트, 선택 입력).
   final String? companionTag;
   final String? memo;
   final DateTime createdAt;
+  final PlanType type;
 
   Plan({
     this.id,
@@ -15,6 +19,7 @@ class Plan {
     this.companionTag,
     this.memo,
     required this.createdAt,
+    required this.type,
   });
 
   factory Plan.create({
@@ -22,6 +27,7 @@ class Plan {
     required String title,
     String? companionTag,
     String? memo,
+    required PlanType type,
   }) {
     return Plan(
       date: date,
@@ -29,6 +35,7 @@ class Plan {
       companionTag: companionTag,
       memo: memo,
       createdAt: DateTime.now(),
+      type: type,
     );
   }
 
@@ -40,6 +47,7 @@ class Plan {
       'companionTag': companionTag,
       'memo': memo,
       'createdAt': createdAt.toIso8601String(),
+      'type': type.dbValue,
     };
   }
 
@@ -51,6 +59,7 @@ class Plan {
       companionTag: map['companionTag'] as String?,
       memo: map['memo'] as String?,
       createdAt: DateTime.parse(map['createdAt'] as String),
+      type: PlanType.fromDbValue(map['type'] as String),
     );
   }
 }

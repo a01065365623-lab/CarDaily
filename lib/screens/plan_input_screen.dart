@@ -3,35 +3,51 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../db/database_helper.dart';
 import '../models/plan.dart';
+import '../models/plan_type.dart';
 import '../theme/app_colors.dart';
 import '../utils/date_formatter.dart';
 
-/// 아직 일어나지 않은 정비 예약을 등록하는 화면. 오늘 이전 날짜는 선택할 수 없다.
+/// 병원 예약을 등록하거나([existingPlan]이 null) 수정하는([existingPlan]이 있음)
+/// 화면. 과거/오늘/미래 날짜 모두 선택하고 저장할 수 있다 — 이미 다녀온 병원
+/// 기록을 나중에 입력하는 경우도 지원해야 하기 때문이다.
 class PlanInputScreen extends StatefulWidget {
   final DateTime initialDate;
+  final Plan? existingPlan;
 
-  const PlanInputScreen({super.key, required this.initialDate});
+  const PlanInputScreen({
+    super.key,
+    required this.initialDate,
+    this.existingPlan,
+  });
 
   @override
   State<PlanInputScreen> createState() => _PlanInputScreenState();
 }
 
 class _PlanInputScreenState extends State<PlanInputScreen> {
-  late DateTime _date = _clampToToday(widget.initialDate);
-  final _titleController = TextEditingController();
-  final _garageController = TextEditingController();
-  final _memoController = TextEditingController();
+  late DateTime _date =
+      widget.existingPlan != null
+          ? DateTime.parse(widget.existingPlan!.date)
+          : DateTime(
+            widget.initialDate.year,
+            widget.initialDate.month,
+            widget.initialDate.day,
+          );
+  late PlanType _type = widget.existingPlan?.type ?? PlanType.maintenance;
+  late final _titleController = TextEditingController(
+    text: widget.existingPlan?.title ?? '',
+  );
+  late final _garageController = TextEditingController(
+    text: widget.existingPlan?.companionTag ?? '',
+  );
+  late final _memoController = TextEditingController(
+    text: widget.existingPlan?.memo ?? '',
+  );
   bool _saving = false;
 
   static DateTime _today() {
     final now = DateTime.now();
     return DateTime(now.year, now.month, now.day);
-  }
-
-  static DateTime _clampToToday(DateTime date) {
-    final today = _today();
-    final normalized = DateTime(date.year, date.month, date.day);
-    return normalized.isBefore(today) ? today : normalized;
   }
 
   @override
@@ -47,7 +63,7 @@ class _PlanInputScreenState extends State<PlanInputScreen> {
     final picked = await showDatePicker(
       context: context,
       initialDate: _date,
-      firstDate: today,
+      firstDate: DateTime(2020, 1, 1),
       lastDate: today.add(const Duration(days: 730)),
     );
     if (picked != null) {
@@ -60,20 +76,47 @@ class _PlanInputScreenState extends State<PlanInputScreen> {
     final l10n = AppLocalizations.of(context)!;
     final title = _titleController.text.trim();
     if (title.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.planInputSnackbarNeedTitle)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.planInputSnackbarNeedTitle)));
       return;
     }
     setState(() => _saving = true);
     try {
-      final plan = Plan.create(
-        date: dateKey(_date),
-        title: title,
-        companionTag: _garageController.text.trim().isEmpty ? null : _garageController.text.trim(),
-        memo: _memoController.text.trim().isEmpty ? null : _memoController.text.trim(),
-      );
-      await DatabaseHelper.instance.insertPlan(plan);
+      final existing = widget.existingPlan;
+      if (existing != null) {
+        final updated = Plan(
+          id: existing.id,
+          date: dateKey(_date),
+          title: title,
+          companionTag:
+              _garageController.text.trim().isEmpty
+                  ? null
+                  : _garageController.text.trim(),
+          memo:
+              _memoController.text.trim().isEmpty
+                  ? null
+                  : _memoController.text.trim(),
+          createdAt: existing.createdAt,
+          type: _type,
+        );
+        await DatabaseHelper.instance.updatePlan(updated);
+      } else {
+        final plan = Plan.create(
+          date: dateKey(_date),
+          title: title,
+          companionTag:
+              _garageController.text.trim().isEmpty
+                  ? null
+                  : _garageController.text.trim(),
+          memo:
+              _memoController.text.trim().isEmpty
+                  ? null
+                  : _memoController.text.trim(),
+          type: _type,
+        );
+        await DatabaseHelper.instance.insertPlan(plan);
+      }
       if (!mounted) return;
       Navigator.of(context).pop(true);
     } catch (e) {
@@ -128,6 +171,31 @@ class _PlanInputScreenState extends State<PlanInputScreen> {
             ),
           ),
           const SizedBox(height: 24),
+          _SectionTitle(l10n.planInputSectionType),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children:
+                PlanType.values.map((type) {
+                  final selected = _type == type;
+                  return ChoiceChip(
+                    label: Text(type.localizedLabel(context)),
+                    selected: selected,
+                    onSelected: (_) => setState(() => _type = type),
+                    selectedColor: AppColors.terracotta,
+                    labelStyle: TextStyle(
+                      color: selected ? Colors.white : AppColors.textPrimary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    backgroundColor: AppColors.terracottaBg,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      side: BorderSide.none,
+                    ),
+                  );
+                }).toList(),
+          ),
+          const SizedBox(height: 24),
           _SectionTitle(l10n.planInputSectionTitle),
           TextField(
             controller: _titleController,
@@ -180,15 +248,27 @@ class _PlanInputScreenState extends State<PlanInputScreen> {
                 backgroundColor: AppColors.amber,
                 foregroundColor: Colors.white,
                 disabledBackgroundColor: AppColors.amber.withValues(alpha: 0.4),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
               ),
-              child: _saving
-                  ? const SizedBox(
-                      width: 22,
-                      height: 22,
-                      child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5),
-                    )
-                  : Text(l10n.planInputSaveButton, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+              child:
+                  _saving
+                      ? const SizedBox(
+                        width: 22,
+                        height: 22,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2.5,
+                        ),
+                      )
+                      : Text(
+                        l10n.planInputSaveButton,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
             ),
           ),
         ],

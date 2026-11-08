@@ -1,11 +1,16 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:intl/intl.dart';
 
 import '../db/database_helper.dart';
 import '../models/companion_tag.dart';
 import '../models/drive.dart';
 import '../models/emotion_category.dart';
+import '../models/fuel_log.dart';
+import '../models/fuel_type.dart';
+import '../models/plan.dart';
+import '../models/plan_type.dart';
 import '../models/purpose_tag.dart';
 import '../theme/app_colors.dart';
 import '../utils/date_formatter.dart';
@@ -20,8 +25,13 @@ class StatsScreen extends StatefulWidget {
 }
 
 class _StatsScreenState extends State<StatsScreen> {
+  // 기름 먹은 날 월별 추이는 주/월 기간 토글과 무관하게 항상 최근 6개월을 보여준다.
+  static const int _fuelTrendMonths = 6;
+
   _StatsPeriod _period = _StatsPeriod.weekly;
   List<Drive> _drives = [];
+  List<FuelLog> _fuelLogs = [];
+  List<Plan> _plans = [];
   bool _loading = true;
 
   int get _windowDays => _period == _StatsPeriod.weekly ? 7 : 30;
@@ -37,12 +47,61 @@ class _StatsScreenState extends State<StatsScreen> {
     final today = DateTime.now();
     final from = today.subtract(Duration(days: _windowDays - 1));
     final drives = await DatabaseHelper.instance.getDrivesForRange(dateKey(from), dateKey(today));
+    final fuelLogs = await DatabaseHelper.instance.getAllFuelLogs();
+    final plans = await DatabaseHelper.instance.getAllPlans();
     if (!mounted) return;
     setState(() {
       _drives = drives;
+      _fuelLogs = fuelLogs;
+      _plans = plans;
       _loading = false;
     });
   }
+
+  /// 최근 [_fuelTrendMonths]개월(이번 달 포함)을 0으로 빈 달까지 채워 반환한다.
+  List<_MonthStat> _fuelMonthlyStats() {
+    final now = DateTime.now();
+    final months = [
+      for (var i = _fuelTrendMonths - 1; i >= 0; i--) DateTime(now.year, now.month - i, 1),
+    ];
+    final byMonth = {
+      for (final m in months) _monthKey(m): _MonthStat(month: m, totalCost: 0, count: 0),
+    };
+    for (final log in _fuelLogs) {
+      final date = DateTime.parse(log.date);
+      final key = _monthKey(DateTime(date.year, date.month, 1));
+      final existing = byMonth[key];
+      if (existing == null) continue;
+      byMonth[key] = _MonthStat(
+        month: existing.month,
+        totalCost: existing.totalCost + log.cost,
+        count: existing.count + 1,
+      );
+    }
+    return [for (final m in months) byMonth[_monthKey(m)]!];
+  }
+
+  String _monthKey(DateTime m) => '${m.year}-${m.month.toString().padLeft(2, '0')}';
+
+  Map<FuelType, ({double totalCost, int count})> _fuelTypeStats() {
+    final map = {for (final t in FuelType.values) t: (totalCost: 0.0, count: 0)};
+    for (final log in _fuelLogs) {
+      final existing = map[log.fuelType]!;
+      map[log.fuelType] = (totalCost: existing.totalCost + log.cost, count: existing.count + 1);
+    }
+    return map;
+  }
+
+  Map<PlanType, int> _planTypeCounts() {
+    final map = {for (final t in PlanType.values) t: 0};
+    for (final plan in _plans) {
+      map[plan.type] = (map[plan.type] ?? 0) + 1;
+    }
+    return map;
+  }
+
+  /// [_plans]는 date DESC로 정렬되어 있으므로 첫 항목이 가장 최근(또는 가장 가까운) 날짜다.
+  String? get _lastVisitDate => _plans.isEmpty ? null : _plans.first.date;
 
   void _onPeriodChanged(_StatsPeriod period) {
     setState(() => _period = period);
@@ -105,6 +164,10 @@ class _StatsScreenState extends State<StatsScreen> {
     final purposeCounts = _purposeCounts();
     final moodCounts = _moodCounts();
     final total = _drives.length;
+    final fuelMonthlyStats = _fuelMonthlyStats();
+    final fuelTypeStats = _fuelTypeStats();
+    final planTypeCounts = _planTypeCounts();
+    final planTotal = _plans.length;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -157,10 +220,43 @@ class _StatsScreenState extends State<StatsScreen> {
                     child: _MoodList(counts: moodCounts, total: total),
                   ),
                 ],
+                const SizedBox(height: 16),
+                _ChartCard(
+                  title: l10n.statsChartFuelCostTitle,
+                  child: SizedBox(height: 160, child: _FuelCostBarChart(stats: fuelMonthlyStats)),
+                ),
+                const SizedBox(height: 16),
+                _ChartCard(
+                  title: l10n.statsChartFuelCountTitle,
+                  child: SizedBox(height: 160, child: _FuelCountBarChart(stats: fuelMonthlyStats)),
+                ),
+                const SizedBox(height: 16),
+                _ChartCard(
+                  title: l10n.statsChartFuelByTypeTitle,
+                  child: _FuelTypeList(stats: fuelTypeStats),
+                ),
+                const SizedBox(height: 16),
+                _ChartCard(
+                  title: l10n.statsChartHospitalTitle,
+                  child: _HospitalVisitSummary(
+                    visitCount: planTotal,
+                    lastVisitDate: _lastVisitDate,
+                    typeCounts: planTypeCounts,
+                    total: planTotal,
+                  ),
+                ),
               ],
             ),
     );
   }
+}
+
+class _MonthStat {
+  final DateTime month;
+  final double totalCost;
+  final int count;
+
+  _MonthStat({required this.month, required this.totalCost, required this.count});
 }
 
 class _DayStat {
@@ -530,6 +626,312 @@ class _MoodList extends StatelessWidget {
                   width: 76,
                   child: Text(
                     '${e.key.emoji} ${e.key.localizedLabel(context)}',
+                    style: const TextStyle(fontSize: 13, color: AppColors.textPrimary),
+                  ),
+                ),
+                Expanded(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(6),
+                    child: LinearProgressIndicator(
+                      value: e.value / total,
+                      minHeight: 10,
+                      backgroundColor: AppColors.terracottaBg,
+                      valueColor: const AlwaysStoppedAnimation(AppColors.terracotta),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  l10n.statsTimesCount(e.value),
+                  style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _FuelCostBarChart extends StatelessWidget {
+  final List<_MonthStat> stats;
+
+  const _FuelCostBarChart({required this.stats});
+
+  @override
+  Widget build(BuildContext context) {
+    final localeTag = Localizations.localeOf(context).languageCode;
+    final maxY = stats.fold<double>(1, (m, s) => s.totalCost > m ? s.totalCost : m);
+    return BarChart(
+      BarChartData(
+        maxY: maxY * 1.2,
+        barTouchData: BarTouchData(enabled: false),
+        titlesData: FlTitlesData(
+          leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              reservedSize: 24,
+              interval: 1,
+              getTitlesWidget: (value, meta) {
+                final index = value.round();
+                if (index < 0 || index >= stats.length) return const SizedBox.shrink();
+                return Padding(
+                  padding: const EdgeInsets.only(top: 6),
+                  child: Text(
+                    DateFormat.MMM(localeTag).format(stats[index].month),
+                    style: const TextStyle(fontSize: 10, color: AppColors.textSecondary),
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+        gridData: const FlGridData(show: false),
+        borderData: FlBorderData(show: false),
+        barGroups: [
+          for (var i = 0; i < stats.length; i++)
+            BarChartGroupData(
+              x: i,
+              barRods: [
+                BarChartRodData(
+                  toY: stats[i].totalCost,
+                  color: AppColors.fuelGold,
+                  width: 18,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ],
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _FuelCountBarChart extends StatelessWidget {
+  final List<_MonthStat> stats;
+
+  const _FuelCountBarChart({required this.stats});
+
+  @override
+  Widget build(BuildContext context) {
+    final localeTag = Localizations.localeOf(context).languageCode;
+    final maxCount = stats.fold<int>(1, (m, s) => s.count > m ? s.count : m);
+    return BarChart(
+      BarChartData(
+        maxY: (maxCount + 1).toDouble(),
+        barTouchData: BarTouchData(enabled: false),
+        titlesData: FlTitlesData(
+          leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              reservedSize: 24,
+              interval: 1,
+              getTitlesWidget: (value, meta) {
+                final index = value.round();
+                if (index < 0 || index >= stats.length) return const SizedBox.shrink();
+                return Padding(
+                  padding: const EdgeInsets.only(top: 6),
+                  child: Text(
+                    DateFormat.MMM(localeTag).format(stats[index].month),
+                    style: const TextStyle(fontSize: 10, color: AppColors.textSecondary),
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+        gridData: const FlGridData(show: false),
+        borderData: FlBorderData(show: false),
+        barGroups: [
+          for (var i = 0; i < stats.length; i++)
+            BarChartGroupData(
+              x: i,
+              barRods: [
+                BarChartRodData(
+                  toY: stats[i].count.toDouble(),
+                  color: AppColors.amberDark,
+                  width: 18,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ],
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _FuelTypeList extends StatelessWidget {
+  final Map<FuelType, ({double totalCost, int count})> stats;
+
+  const _FuelTypeList({required this.stats});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final localeTag = Localizations.localeOf(context).languageCode;
+    final costFormat = NumberFormat('#,##0', localeTag);
+    final entries = stats.entries.where((e) => e.value.count > 0).toList()
+      ..sort((a, b) => b.value.totalCost.compareTo(a.value.totalCost));
+    if (entries.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        child: Center(
+          child: Text(l10n.statsNoDataLabel, style: const TextStyle(color: AppColors.textSecondary)),
+        ),
+      );
+    }
+    final costTotal = entries.fold<double>(0, (sum, e) => sum + e.value.totalCost);
+    return Column(
+      children: [
+        for (final e in entries)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 6),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 76,
+                  child: Text(
+                    e.key.localizedLabel(context),
+                    style: const TextStyle(fontSize: 13, color: AppColors.textPrimary),
+                  ),
+                ),
+                Expanded(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(6),
+                    child: LinearProgressIndicator(
+                      value: costTotal == 0 ? 0 : e.value.totalCost / costTotal,
+                      minHeight: 10,
+                      backgroundColor: AppColors.amberLight,
+                      valueColor: const AlwaysStoppedAnimation(AppColors.fuelGold),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  '${l10n.fuelLogListCostAmount(costFormat.format(e.value.totalCost))} · ${l10n.statsTimesCount(e.value.count)}',
+                  style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _HospitalVisitSummary extends StatelessWidget {
+  final int visitCount;
+  final String? lastVisitDate;
+  final Map<PlanType, int> typeCounts;
+  final int total;
+
+  const _HospitalVisitSummary({
+    required this.visitCount,
+    required this.lastVisitDate,
+    required this.typeCounts,
+    required this.total,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final localeTag = Localizations.localeOf(context).languageCode;
+    final lastVisit = lastVisitDate;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: _HospitalSummaryStat(
+                label: l10n.statsHospitalVisitCountLabel,
+                value: l10n.statsTimesCount(visitCount),
+              ),
+            ),
+            Expanded(
+              child: _HospitalSummaryStat(
+                label: l10n.statsHospitalLastVisitLabel,
+                value: lastVisit == null
+                    ? l10n.statsHospitalNoVisitLabel
+                    : DateFormat.yMMMd(localeTag).format(DateTime.parse(lastVisit)),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 20),
+        Text(
+          l10n.statsHospitalTypeDistributionLabel,
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
+        ),
+        const SizedBox(height: 10),
+        _PlanTypeList(counts: typeCounts, total: total),
+      ],
+    );
+  }
+}
+
+class _HospitalSummaryStat extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _HospitalSummaryStat({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
+        ),
+      ],
+    );
+  }
+}
+
+class _PlanTypeList extends StatelessWidget {
+  final Map<PlanType, int> counts;
+  final int total;
+
+  const _PlanTypeList({required this.counts, required this.total});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final entries = counts.entries.where((e) => e.value > 0).toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+    if (entries.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        child: Center(
+          child: Text(l10n.statsNoDataLabel, style: const TextStyle(color: AppColors.textSecondary)),
+        ),
+      );
+    }
+    return Column(
+      children: [
+        for (final e in entries)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 6),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 76,
+                  child: Text(
+                    e.key.localizedLabel(context),
                     style: const TextStyle(fontSize: 13, color: AppColors.textPrimary),
                   ),
                 ),

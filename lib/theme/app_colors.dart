@@ -37,5 +37,8 @@ class AppColors {
   // 캘린더 기록 점(dot)
   static const Color calendarDot = amber;
 
+  // 포인트: "기름 먹은 날" 버튼용 골드(노랑-주황). 메인 앰버와 구분되도록 더 밝고 노란 톤.
+  static const Color fuelGold = Color(0xFFD9A441);
+
   static const Color divider = Color(0xFFE7DDCF);
 }
