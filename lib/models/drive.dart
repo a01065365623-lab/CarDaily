@@ -27,6 +27,9 @@ class Drive {
   /// 입력 화면에서 유튜브로 찾아본 노래 제목(선택). 상세 화면에서 그대로 다시
   /// 볼 수 있도록 저장해 둔다.
   final String? songTitle;
+
+  /// 입력 화면 '맛집·가볼만한곳'에 적은 메모(선택). 유튜브 검색어로도 쓰인다.
+  final String? placesNote;
   final DateTime createdAt;
 
   Drive({
@@ -44,6 +47,7 @@ class Drive {
     this.memo,
     required this.photoPaths,
     this.songTitle,
+    this.placesNote,
     required this.createdAt,
   });
 
@@ -62,6 +66,7 @@ class Drive {
     String? memo,
     required List<String> photoPaths,
     String? songTitle,
+    String? placesNote,
     DateTime? createdAt,
   }) {
     return Drive(
@@ -79,6 +84,7 @@ class Drive {
       memo: memo,
       photoPaths: photoPaths,
       songTitle: songTitle,
+      placesNote: placesNote,
       createdAt: createdAt ?? DateTime.now(),
     );
   }
@@ -110,6 +116,7 @@ class Drive {
       'memo': memo,
       'photo_paths': jsonEncode(photoPaths),
       'song_title': songTitle,
+      'places_note': placesNote,
       'created_at': createdAt.toIso8601String(),
     };
   }
@@ -134,6 +141,7 @@ class Drive {
           (jsonDecode(map['photo_paths'] as String) as List<dynamic>)
               .cast<String>(),
       songTitle: map['song_title'] as String?,
+      placesNote: map['places_note'] as String?,
       createdAt: DateTime.parse(map['created_at'] as String),
     );
   }

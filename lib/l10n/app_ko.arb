@@ -68,6 +68,20 @@
   "recordInputEndTimeLabel": "도착",
   "recordInputSectionDistance": "거리",
   "recordInputDistanceHint": "몇 km를 달렸나요?",
+  "recordInputSectionPlaces": "맛집·가볼만한곳",
+  "recordInputPlacesHint": "도착지 근처 맛집이나 가볼 곳을 적어보세요",
+  "recordInputPlacesYoutubeButton": "유튜브에서 찾아보기",
+  "recordInputPlacesSearchQuery": "{query} 맛집",
+  "@recordInputPlacesSearchQuery": {
+    "description": "맛집·가볼만한곳 유튜브 검색어. query는 입력값(비어 있으면 도착지)",
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "recordInputProductsTitle": "이번 드라이브에 어울리는 상품",
+  "recordInputProductsSubtitle": "차량용품이나 여행 준비물을 바로 찾아볼 수 있어요",
   "recordInputSectionPhoto": "사진",
   "recordInputCameraOption": "카메라로 촬영",
   "recordInputGalleryOption": "갤러리에서 선택",
@@ -332,5 +346,26 @@
   "shopQueryDate": "드라이브 데이트 선물",
   "shopQueryCommute": "차량용품",
   "shopQueryDrive": "드라이브 필수템",
-  "shopQueryEtc": "차량용품"
+  "shopQueryEtc": "차량용품",
+  "settingsPrivacyPolicyTitle": "개인정보처리방침",
+  "settingsPrivacyPolicySubtitle": "수집 정보와 데이터 처리 방식을 확인하세요",
+  "settingsLinkOpenFailed": "링크를 열 수 없습니다",
+  "settingsOtherAppsTitle": "다른 앱",
+  "settingsOtherAppsOpen": "열기",
+  "otherAppWediDesc": "날씨에 맞는 옷차림을 알려주는 가이드",
+  "otherAppWordBattleDesc": "영단어 퀴즈 대결",
+  "otherAppLexDartDesc": "다트로 즐기는 영단어 학습",
+  "otherAppLexTileDesc": "단어 마작 매칭 퍼즐",
+  "otherAppLexfallDesc": "단어 블록 퍼즐",
+  "otherAppWordBreakerQuestDesc": "벽돌을 깨며 단어를 완성하는 게임",
+  "otherAppWediName": "Wedi",
+  "otherAppWordBattleName": "WordBattle",
+  "otherAppLexDartName": "LexDart",
+  "otherAppLexTileName": "LexTile",
+  "otherAppLexfallName": "Lexfall",
+  "otherAppWordBreakerQuestName": "Word Breaker Quest",
+  "otherAppDrinkDiaryDesc": "누구와, 왜 마셨는지 기록하는 음주 다이어리",
+  "otherAppCalSnapDesc": "사진 한 장으로 기록하는 칼로리 트래커",
+  "otherAppDrinkDiaryName": "DrinkDiary",
+  "otherAppCalSnapName": "CalSnap"
 }

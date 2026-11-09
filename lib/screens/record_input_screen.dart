@@ -13,7 +13,9 @@ import '../theme/app_colors.dart';
 import '../utils/date_formatter.dart';
 import '../utils/photo_storage.dart';
 import '../utils/youtube_launcher.dart';
+import '../widgets/banner_ad_widget.dart';
 import '../widgets/dashed_border_box.dart';
+import '../widgets/shop_link_sheet.dart';
 import 'photo_gallery_screen.dart';
 
 /// 하루 운행 기록을 입력하거나([existingDrive]가 null) 수정하는
@@ -51,6 +53,9 @@ class _RecordInputScreenState extends State<RecordInputScreen> {
   );
   late final _distanceController = TextEditingController(
     text: widget.existingDrive?.distanceKm?.toString() ?? '',
+  );
+  late final _placesController = TextEditingController(
+    text: widget.existingDrive?.placesNote ?? '',
   );
   late TimeOfDay? _startTime = _parseTime(widget.existingDrive?.startTime);
   late TimeOfDay? _endTime = _parseTime(widget.existingDrive?.endTime);
@@ -96,6 +101,7 @@ class _RecordInputScreenState extends State<RecordInputScreen> {
     _startPlaceController.dispose();
     _endPlaceController.dispose();
     _distanceController.dispose();
+    _placesController.dispose();
     _companionCustomController.dispose();
     _moodDetailController.dispose();
     _memoController.dispose();
@@ -220,6 +226,22 @@ class _RecordInputScreenState extends State<RecordInputScreen> {
     }
   }
 
+  /// 맛집·가볼만한곳 유튜브 검색의 기준어. 입력값이 있으면 입력값, 없으면 도착지.
+  String get _placesSearchBase {
+    final places = _placesController.text.trim();
+    return places.isNotEmpty ? places : _endPlaceController.text.trim();
+  }
+
+  /// 입력 중인 맛집·가볼만한곳(없으면 도착지)에 "맛집"을 붙여 유튜브 검색을 연다.
+  /// 기존 노래 유튜브 버튼과 같이 저장 없이 바로 외부 앱으로 이동한다.
+  void _openPlacesYoutube() {
+    final base = _placesSearchBase;
+    if (base.isEmpty) return;
+    openYoutubeSearch(
+      AppLocalizations.of(context)!.recordInputPlacesSearchQuery(base),
+    );
+  }
+
   List<String> get _companionTags {
     final tags = _companionChips.map((c) => c.label).toList();
     if (_companionIsCustom) {
@@ -254,6 +276,10 @@ class _RecordInputScreenState extends State<RecordInputScreen> {
         _songTitleController.text.trim().isEmpty
             ? null
             : _songTitleController.text.trim();
+    final placesNote =
+        _placesController.text.trim().isEmpty
+            ? null
+            : _placesController.text.trim();
     final existing = widget.existingDrive;
     if (existing != null) {
       final updated = Drive(
@@ -271,6 +297,7 @@ class _RecordInputScreenState extends State<RecordInputScreen> {
         memo: memo,
         photoPaths: _photoPaths,
         songTitle: songTitle,
+        placesNote: placesNote,
         createdAt: existing.createdAt,
       );
       await DatabaseHelper.instance.updateDrive(updated);
@@ -289,6 +316,7 @@ class _RecordInputScreenState extends State<RecordInputScreen> {
         memo: memo,
         photoPaths: _photoPaths,
         songTitle: songTitle,
+        placesNote: placesNote,
       );
       await DatabaseHelper.instance.insertDrive(drive);
     }
@@ -330,6 +358,8 @@ class _RecordInputScreenState extends State<RecordInputScreen> {
           const SizedBox(height: 10),
           TextField(
             controller: _endPlaceController,
+            // 맛집 입력이 비어 있을 때 도착지로 유튜브 버튼을 띄우기 위해 갱신한다.
+            onChanged: (_) => setState(() {}),
             decoration: InputDecoration(
               hintText: l10n.recordInputEndPlaceHint,
               prefixIcon: const Icon(
@@ -385,6 +415,43 @@ class _RecordInputScreenState extends State<RecordInputScreen> {
               ),
             ),
           ),
+          // DrinkDiary의 안주 입력 + "레시피 보기" 버튼과 같은 구조. 입력값(없으면
+          // 도착지)에 "맛집"을 붙여 유튜브 검색을 연다.
+          const SizedBox(height: 24),
+          _SectionTitle(l10n.recordInputSectionPlaces),
+          TextField(
+            controller: _placesController,
+            onChanged: (_) => setState(() {}),
+            decoration: InputDecoration(
+              hintText: l10n.recordInputPlacesHint,
+              filled: true,
+              fillColor: AppColors.cardBackground,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: AppColors.divider),
+              ),
+            ),
+          ),
+          if (_placesSearchBase.isNotEmpty)
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: OutlinedButton.icon(
+                  onPressed: _openPlacesYoutube,
+                  icon: const Icon(Icons.ondemand_video_rounded, size: 18),
+                  label: Text(l10n.recordInputPlacesYoutubeButton),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppColors.woodBrown,
+                    backgroundColor: AppColors.woodBrownLight,
+                    side: const BorderSide(color: AppColors.woodBrown),
+                    shape: const StadiumBorder(),
+                    visualDensity: VisualDensity.compact,
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                  ),
+                ),
+              ),
+            ),
           const SizedBox(height: 24),
           _SectionTitle(l10n.recordInputSectionPhoto),
           SizedBox(
@@ -694,6 +761,69 @@ class _RecordInputScreenState extends State<RecordInputScreen> {
                           fontWeight: FontWeight.w700,
                         ),
                       ),
+            ),
+          ),
+          // DrinkDiary 레시피 영상 화면과 같은 배치: 관련 상품 카드 → 그 아래 적응형
+          // 배너. 배너는 카드 안쪽 여백(16) + 24dp 떨어뜨려 실수 클릭을 막고, 여백은
+          // 광고가 로드됐을 때만 생긴다.
+          const SizedBox(height: 24),
+          _buildProductsSection(l10n),
+          const BannerAdWidget(
+            adaptive: true,
+            padding: EdgeInsets.only(top: 24),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProductsSection(AppLocalizations l10n) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.cardBackground,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.divider),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            l10n.recordInputProductsTitle,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              color: AppColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            l10n.recordInputProductsSubtitle,
+            style: const TextStyle(
+              fontSize: 13,
+              color: AppColors.textSecondary,
+            ),
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            height: 48,
+            child: ElevatedButton.icon(
+              // 현재 고른 운행 목적에 맞는 검색어로 쿠팡/네이버/아마존 바텀시트 →
+              // 확인 바텀시트(confirmAndLaunchAffiliateLink)를 거쳐 이동한다.
+              onPressed:
+                  () => openShoppingSearch(
+                    context,
+                    _purposeTag.shopQuery(context),
+                  ),
+              icon: const Icon(Icons.shopping_bag_outlined),
+              label: Text(l10n.shopSideDishAction),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.woodBrown,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
             ),
           ),
         ],

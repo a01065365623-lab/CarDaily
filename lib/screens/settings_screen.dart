@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import '../config/cross_promo_config.dart';
 import '../services/settings_service.dart';
 import '../theme/app_colors.dart';
 import 'fuel_log_list_screen.dart';
@@ -169,8 +171,87 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     trailing: const Icon(Icons.chevron_right_rounded, color: AppColors.textSecondary),
                   ),
                 ),
+                const SizedBox(height: 12),
+                Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.cardBackground,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: AppColors.divider),
+                  ),
+                  child: ListTile(
+                    onTap: () => _openExternal(Uri.parse(kPrivacyPolicyUrl)),
+                    title: Text(
+                      l10n.settingsPrivacyPolicyTitle,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    subtitle: Text(
+                      l10n.settingsPrivacyPolicySubtitle,
+                      style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                    ),
+                    trailing: const Icon(Icons.open_in_new_rounded, color: AppColors.textSecondary),
+                  ),
+                ),
+                const SizedBox(height: 32),
+                Padding(
+                  padding: const EdgeInsets.only(left: 4, bottom: 8),
+                  child: Text(
+                    l10n.settingsOtherAppsTitle,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.cardBackground,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: AppColors.divider),
+                  ),
+                  child: Column(
+                    children: [
+                      for (var i = 0; i < kCrossPromoApps.length; i++) ...[
+                        if (i > 0) const Divider(height: 1, color: AppColors.divider),
+                        ListTile(
+                          title: Text(
+                            kCrossPromoApps[i].name(l10n),
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.textPrimary,
+                            ),
+                          ),
+                          subtitle: Text(
+                            kCrossPromoApps[i].description(l10n),
+                            style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                          ),
+                          trailing: OutlinedButton(
+                            onPressed: () => _openExternal(kCrossPromoApps[i].playStoreUri),
+                            child: Text(l10n.settingsOtherAppsOpen),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                // 광고 영역(하단 배너 등)과 최소 24dp 이상 간격을 둔다.
+                const SizedBox(height: 32),
               ],
             ),
     );
+  }
+
+  Future<void> _openExternal(Uri uri) async {
+    final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (!ok && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context)!.settingsLinkOpenFailed)),
+      );
+    }
   }
 }

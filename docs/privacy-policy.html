@@ -3,387 +3,250 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CarDaily Privacy Policy / 개인정보처리방침</title>
+<title>CarDaily(자동차 일지) 개인정보처리방침 / Privacy Policy</title>
+<meta name="description" content="CarDaily(자동차 일지) 개인정보처리방침 - K-Brain Games Lab. Privacy Policy for the CarDaily app.">
 <style>
-  :root {
-    --bg: #ffffff;
-    --fg: #1c1c1e;
-    --muted: #6b7280;
-    --border: #e5e7eb;
-    --accent: #c97b34;
-    --card: #f9fafb;
-    --code-bg: #f3f4f6;
-  }
+  :root { --bg:#ffffff; --fg:#1c1c1e; --muted:#6b7280; --border:#e5e7eb; --accent:#a8611f; --card:#f9fafb; }
   @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #16171a;
-      --fg: #e8e8ea;
-      --muted: #9aa0a6;
-      --border: #2c2d31;
-      --accent: #e0a25f;
-      --card: #1e1f23;
-      --code-bg: #232428;
-    }
+    :root { --bg:#16171a; --fg:#e8e8ea; --muted:#9aa0a6; --border:#2c2d31; --accent:#e0a25f; --card:#1e1f23; }
   }
   * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--fg);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", "Apple SD Gothic Neo", Roboto, Helvetica, Arial, sans-serif;
-    line-height: 1.65;
-  }
-  .wrap {
-    max-width: 760px;
-    margin: 0 auto;
-    padding: 40px 20px 80px;
-  }
-  header.page-head {
-    margin-bottom: 24px;
-  }
-  h1 {
-    font-size: 1.6rem;
-    margin: 0 0 6px;
-  }
-  .meta {
-    color: var(--muted);
-    font-size: 0.9rem;
-  }
-  .lang-toggle {
-    display: inline-flex;
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    overflow: hidden;
-    margin-top: 16px;
-  }
-  .lang-toggle label {
-    padding: 6px 16px;
-    font-size: 0.85rem;
-    cursor: pointer;
-    color: var(--muted);
-    user-select: none;
-  }
-  .lang-toggle input { display: none; }
-  #lang-ko:checked ~ .lang-toggle label[for="lang-ko"],
-  #lang-en:checked ~ .lang-toggle label[for="lang-en"] {
-    background: var(--accent);
-    color: #fff;
-  }
-  section.doc { display: none; }
-  #lang-ko:checked ~ section.doc-ko,
-  #lang-en:checked ~ section.doc-en {
-    display: block;
-  }
-  h2 {
-    font-size: 1.15rem;
-    margin: 32px 0 10px;
-    padding-bottom: 6px;
-    border-bottom: 1px solid var(--border);
-  }
-  h3 {
-    font-size: 1rem;
-    margin: 20px 0 8px;
-  }
-  p { margin: 8px 0; }
-  ul { margin: 8px 0; padding-left: 22px; }
-  li { margin: 4px 0; }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 12px 0;
-    font-size: 0.92rem;
-  }
-  th, td {
-    text-align: left;
-    padding: 8px 10px;
-    border: 1px solid var(--border);
-    vertical-align: top;
-  }
-  th {
-    background: var(--card);
-    font-weight: 600;
-  }
-  .card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 14px 16px;
-    margin: 12px 0;
-    font-size: 0.92rem;
-  }
-  code {
-    background: var(--code-bg);
-    padding: 1px 5px;
-    border-radius: 4px;
-    font-size: 0.9em;
-  }
-  a { color: var(--accent); }
-  footer {
-    margin-top: 48px;
-    padding-top: 16px;
-    border-top: 1px solid var(--border);
-    color: var(--muted);
-    font-size: 0.85rem;
-  }
+  body { margin:0; background:var(--bg); color:var(--fg); line-height:1.7;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR","Apple SD Gothic Neo",Roboto,Helvetica,Arial,sans-serif; }
+  .wrap { max-width:780px; margin:0 auto; padding:32px 16px 80px; }
+  h1 { font-size:1.55rem; margin:0 0 6px; }
+  h2 { font-size:1.3rem; margin:48px 0 8px; padding-top:8px; }
+  h3 { font-size:1.05rem; margin:28px 0 8px; padding-bottom:4px; border-bottom:1px solid var(--border); }
+  .meta { color:var(--muted); font-size:0.92rem; }
+  nav.lang { margin:16px 0 8px; font-size:0.95rem; }
+  nav.lang a { display:inline-block; padding:6px 14px; margin-right:6px; border:1px solid var(--border); border-radius:999px; text-decoration:none; }
+  p { margin:8px 0; }
+  ul { margin:8px 0; padding-left:22px; }
+  li { margin:4px 0; }
+  table { width:100%; border-collapse:collapse; margin:12px 0; font-size:0.92rem; }
+  th, td { text-align:left; padding:8px 10px; border:1px solid var(--border); vertical-align:top; }
+  th { background:var(--card); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:12px 16px; margin:12px 0; }
+  a { color:var(--accent); word-break:break-word; }
+  hr { border:0; border-top:2px solid var(--border); margin:56px 0 0; }
+  footer { margin-top:48px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:0.85rem; }
 </style>
 </head>
 <body>
-<input type="radio" name="lang" id="lang-ko" checked style="display:none">
-<input type="radio" name="lang" id="lang-en" style="display:none">
-
 <div class="wrap">
-  <header class="page-head">
-    <h1>CarDaily 개인정보처리방침 / Privacy Policy</h1>
-    <div class="meta">시행일 / Effective date: 2026-08-27</div>
-    <div class="lang-toggle">
-      <label for="lang-ko">한국어</label><label for="lang-en">English</label>
-    </div>
-  </header>
 
-  <section class="doc doc-ko">
-    <p>
-      <strong>CarDaily</strong>(이하 "앱")은 <strong>K-Brain Games Lab</strong>(이하 "개발자")이 개발 및 운영합니다.
-      본 개인정보처리방침은 앱 이용 과정에서 수집되는 정보와 그 처리 방식을 설명합니다.
-    </p>
+<header>
+  <h1>CarDaily(자동차 일지) 개인정보처리방침<br>CarDaily Privacy Policy</h1>
+  <p class="meta">개발자 / Developer: K-Brain Games Lab · 문의 / Contact: <a href="mailto:teeth07@naver.com">teeth07@naver.com</a><br>
+  시행일 / Effective date: 2026-11-10</p>
+  <nav class="lang">
+    <a href="#ko">한국어</a>
+    <a href="#en">English</a>
+  </nav>
+</header>
 
-    <h2>1. 수집하는 정보</h2>
-    <table>
-      <thead><tr><th>항목</th><th>수집 목적</th><th>저장 위치</th></tr></thead>
-      <tbody>
-        <tr>
-          <td>운행 기록 (날짜, 출발/도착지, 거리, 시각)</td>
-          <td>캘린더 기록 열람 및 통계(운행 빈도, 거리 추이 등) 제공</td>
-          <td>기기 내부 로컬 데이터베이스(SQLite)</td>
-        </tr>
-        <tr>
-          <td>사진 (기록당 최대 3장)</td>
-          <td>그날의 기록에 사진을 첨부해 보관</td>
-          <td>기기 내부 저장소 (서버 전송 없음)</td>
-        </tr>
-        <tr>
-          <td>동행 태그·목적 태그·기분 태그·메모</td>
-          <td>기록 상세 내용 저장 및 통계 제공</td>
-          <td>기기 내부 로컬 데이터베이스</td>
-        </tr>
-        <tr>
-          <td>정비 예약 정보</td>
-          <td>다가오는 차량 정비 예약 관리 및 알림 표시</td>
-          <td>기기 내부 로컬 데이터베이스</td>
-        </tr>
-        <tr>
-          <td>기념일/마일스톤 정보</td>
-          <td>매년 반복되는 차량 기념일을 캘린더에 표시</td>
-          <td>기기 내부 로컬 데이터베이스</td>
-        </tr>
-        <tr>
-          <td>마이카 애칭</td>
-          <td>홈 화면에 애칭을 표시</td>
-          <td>기기 내부 저장소(SharedPreferences)</td>
-        </tr>
-        <tr>
-          <td>광고 식별자 (Advertising ID)</td>
-          <td>Google AdMob을 통한 맞춤형 광고 게재 및 성과 측정</td>
-          <td>Google AdMob(제3자)에 제공</td>
-        </tr>
-      </tbody>
-    </table>
-    <p>
-      앱은 회원가입·로그인을 요구하지 않으며, 위치정보를 자동으로 수집하지 않습니다(출발지/도착지는 사용자가
-      직접 입력하는 텍스트입니다). 이름·이메일 주소·전화번호 등 사용자를 직접 식별할 수 있는 정보도
-      수집하지 않습니다. 위 표의 운행 기록, 사진, 태그, 메모, 정비 예약, 기념일, 애칭 정보는 모두 기기
-      내부에만 저장되며 개발자의 서버로 전송되지 않습니다.
-    </p>
+<!-- ===================== 한국어 ===================== -->
+<section id="ko" lang="ko">
+  <h2>개인정보처리방침 (한국어)</h2>
+  <p>
+    K-Brain Games Lab(이하 "개발자")은 Android 앱 <strong>CarDaily(자동차 일지)</strong>(이하 "앱")를 개발·운영합니다.
+    본 방침은 앱이 어떤 정보를 수집·저장·이용·공유하는지, 그리고 이용자가 이를 어떻게 관리할 수 있는지를 설명합니다.
+  </p>
+  <ul>
+    <li>개발자: K-Brain Games Lab</li>
+    <li>앱 이름: CarDaily(자동차 일지)</li>
+    <li>문의: <a href="mailto:teeth07@naver.com">teeth07@naver.com</a></li>
+    <li>시행일: 2026년 11월 10일</li>
+  </ul>
 
-    <h2>2. 제3자 서비스</h2>
-    <p>앱은 다음 서비스를 이용하며, 각 서비스는 자체 개인정보처리방침에 따라 정보를 처리합니다.</p>
-    <ul>
-      <li><strong>Google AdMob</strong> — 앱 내 배너·전면 광고 게재에 사용되며, 광고 식별자 등 기기 정보를 수집할 수 있습니다.</li>
-      <li><strong>쿠팡파트너스, 네이버 쇼핑커넥트</strong> — 한국어를 사용하는 이용자에게 여행·차량 용품 관련 상품 검색 링크로 노출되는 제휴 링크입니다.</li>
-      <li><strong>Amazon Associates</strong> (제휴 스토어 ID: <code>wedia</code>) — 한국어 외 언어를 사용하는 이용자에게 노출되는 제휴 링크입니다.</li>
-    </ul>
-    <p>
-      쇼핑 제휴 링크는 운행 기록 저장 완료 후 안내되는 "관련 상품 보기" 버튼을 이용자가 직접 탭했을 때만
-      동작합니다. 탭 시 실제로 이동할 URL을 확인창으로 먼저 보여주고, 이용자가 이동을 다시 한번 확인해야만
-      해당 쇼핑몰로 연결됩니다. 해당 방문 사실은 개발자의 서버를 거치지 않고 이동 시점에 각 플랫폼(쿠팡,
-      네이버, Amazon)에만 전달됩니다.
-    </p>
-    <div class="card">
-      각 서비스의 개인정보 처리에 대해서는 아래 문서를 참고해주세요.
-      <ul>
-        <li>Google Privacy Policy: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com/privacy</a></li>
-        <li>AdMob 개인정보 및 데이터 보안: <a href="https://support.google.com/admob/answer/6128543" target="_blank" rel="noopener">support.google.com/admob</a></li>
-        <li>쿠팡파트너스 이용약관: <a href="https://partners.coupang.com" target="_blank" rel="noopener">partners.coupang.com</a></li>
-        <li>Amazon 개인정보 고지: <a href="https://www.amazon.com/privacy" target="_blank" rel="noopener">amazon.com/privacy</a></li>
-      </ul>
-    </div>
+  <h3>1. 수집·저장하는 정보와 처리 방식</h3>
+  <p>앱은 회원가입이나 로그인을 요구하지 않으며, 이름·이메일·전화번호 등 이용자를 직접 식별하는 정보를 수집하지 않습니다.
+  앱 이용 중 이용자가 직접 입력하거나 선택한 아래 정보는 <strong>이용자의 기기 내부(SQLite 데이터베이스 및 앱 전용 저장소)에만 저장</strong>되며,
+  <strong>개발자의 서버나 제3자에게 전송되지 않습니다.</strong> 개발자는 이 정보에 접근할 수 없습니다.</p>
+  <table>
+    <thead><tr><th>항목</th><th>이용 목적</th><th>저장 위치</th></tr></thead>
+    <tbody>
+      <tr><td>운행 기록(날짜, 시각, 거리, 동행·목적·기분 태그)</td><td>캘린더 기록 및 통계 표시</td><td>기기 내부 SQLite</td></tr>
+      <tr><td>출발지·도착지 텍스트</td><td>운행 기록 표시 (이용자가 직접 입력한 텍스트이며, GPS 위치정보는 수집하지 않음)</td><td>기기 내부 SQLite</td></tr>
+      <tr><td>메모</td><td>운행 기록에 메모 보관</td><td>기기 내부 SQLite</td></tr>
+      <tr><td>사진(기록당 최대 3장)</td><td>운행 기록에 사진 첨부</td><td>기기 내부 앱 전용 저장소 (경로는 SQLite에 저장)</td></tr>
+      <tr><td>마이카 애칭</td><td>홈 화면 표시</td><td>기기 내부 저장소(SharedPreferences)</td></tr>
+      <tr><td>주유 기록</td><td>주유 내역 및 비용 관리</td><td>기기 내부 SQLite</td></tr>
+      <tr><td>병원(차량 정비) 예약 기록</td><td>다가오는 정비 일정 관리</td><td>기기 내부 SQLite</td></tr>
+      <tr><td>기념일 기록</td><td>차량 관련 기념일을 캘린더에 표시</td><td>기기 내부 SQLite</td></tr>
+    </tbody>
+  </table>
+  <p>이용자가 공유 기능을 직접 실행하면 기록 화면 이미지가 이용자가 선택한 앱(메신저 등)으로 전달되며, 이 경우 해당 앱의 정책이 적용됩니다.
+  이용자가 사진 저장을 선택하면 사진이 기기 갤러리에 저장됩니다.</p>
 
-    <h2>3. 데이터 저장 및 보안</h2>
-    <ul>
-      <li>운행 기록, 사진, 동행·목적·기분 태그, 메모, 정비 예약, 기념일, 애칭 등 앱에서 만드는 모든 개인 기록은 <strong>기기 내부 로컬 데이터베이스와 저장소</strong>에만 보관되며, 개발자의 서버에 별도로 업로드·저장되지 않습니다.</li>
-      <li>사진은 기기 내부 저장소에만 저장되며, 어떤 서버로도 전송되지 않습니다.</li>
-      <li>앱을 삭제하면 기기에 저장된 모든 로컬 데이터(운행 기록, 사진, 태그, 메모, 정비 예약, 기념일, 애칭)가 함께 삭제됩니다.</li>
-    </ul>
+  <h3>2. 광고 (Google AdMob)</h3>
+  <p>앱은 무료 제공을 위해 Google AdMob을 통해 배너 및 전면 광고를 표시합니다. 이 과정에서 <strong>Google AdMob SDK가 광고 ID(Android Advertising ID),
+  기기 정보(기기 모델, OS 버전, 언어, IP 주소 등), 광고 상호작용 정보</strong>를 자동으로 수집·사용하며, 이 정보는 <strong>Google에 공유</strong>되어
+  광고 게재, 맞춤형 광고, 광고 성과 측정, 부정행위 방지에 사용됩니다. 개발자는 이 정보를 직접 수집하거나 저장하지 않습니다.</p>
+  <p>이용자는 기기 설정에서 언제든지 광고 ID를 재설정하거나 삭제하고, 맞춤 광고를 해제할 수 있습니다.</p>
+  <ul>
+    <li>Android: 설정 &gt; 개인정보 보호(또는 Google) &gt; 광고 &gt; 광고 ID 재설정 / 광고 ID 삭제</li>
+    <li>맞춤 광고 설정: <a href="https://adssettings.google.com">https://adssettings.google.com</a></li>
+  </ul>
+  <p>Google의 데이터 처리에 대한 자세한 내용:</p>
+  <ul>
+    <li>Google 개인정보처리방침: <a href="https://policies.google.com/privacy">https://policies.google.com/privacy</a></li>
+    <li>Google이 파트너 사이트·앱의 정보를 사용하는 방식: <a href="https://policies.google.com/technologies/partner-sites">https://policies.google.com/technologies/partner-sites</a></li>
+  </ul>
 
-    <h2>4. 광고</h2>
-    <p>
-      앱은 Google AdMob을 통해 배너 및 전면 광고를 게재하며, 이 과정에서 광고 식별자(Advertising ID) 등
-      기기 정보가 Google에 제공될 수 있습니다. 맞춤형 광고 수신을 원하지 않는 경우 기기의 설정에서
-      광고 개인 최적화를 제한할 수 있습니다.
-    </p>
-    <ul>
-      <li>Android: 설정 &gt; 개인정보 보호 &gt; 광고 &gt; 광고 개인 최적화 선택 해제</li>
-      <li>iOS: 설정 &gt; 개인정보 보호 및 보안 &gt; 추적 &gt; 앱이 추적하도록 허용 끄기</li>
-    </ul>
+  <h3>3. 외부 링크</h3>
+  <ul>
+    <li><strong>YouTube 검색</strong>: 이용자가 버튼을 누르면 YouTube 검색 결과가 YouTube 앱 또는 외부 브라우저에서 열립니다.</li>
+    <li><strong>쇼핑 제휴 링크</strong>: 쿠팡 파트너스, 네이버 커넥트, Amazon Associates 제휴 링크는 이용자가 직접 누른 경우에만 외부 앱 또는 브라우저로 이동합니다.</li>
+  </ul>
+  <p>외부 앱·웹사이트로 이동한 이후의 정보 처리는 해당 서비스(YouTube/Google, 쿠팡, 네이버, Amazon)의 개인정보처리방침이 적용되며, 앱은 이동 이후의 활동 정보를 수집하지 않습니다.</p>
+  <div class="card">
+    <strong>제휴 고지:</strong> 이 앱은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받을 수 있습니다.
+    또한 네이버 커넥트 및 Amazon Associates 프로그램 참여자로서 적격 구매에 대해 수수료를 받을 수 있습니다. 이용자가 지불하는 가격에는 영향이 없습니다.
+  </div>
 
-    <h2>5. 아동의 개인정보</h2>
-    <p>본 앱은 만 14세 미만 아동을 대상으로 하지 않으며, 아동으로부터 고의로 개인정보를 수집하지 않습니다.</p>
+  <h3>4. 앱 권한</h3>
+  <table>
+    <thead><tr><th>권한</th><th>사용 목적</th></tr></thead>
+    <tbody>
+      <tr><td>사진 선택(갤러리 접근)</td><td>운행 기록에 첨부할 사진을 고르기 위해 Android 시스템 사진 선택기를 사용합니다. 이용자가 선택한 사진만 앱이 읽으며, 갤러리 전체에 접근하는 별도 권한은 요청하지 않습니다.</td></tr>
+      <tr><td>카메라 (CAMERA)</td><td>이용자가 "카메라로 촬영"을 선택한 경우에만 기록에 첨부할 사진을 촬영합니다.</td></tr>
+      <tr><td>저장소 쓰기 (WRITE_EXTERNAL_STORAGE, Android 10 이하에서만)</td><td>이용자가 요청한 경우 사진을 기기 갤러리에 저장합니다.</td></tr>
+      <tr><td>인터넷, 네트워크 상태 (INTERNET, ACCESS_NETWORK_STATE)</td><td>광고 로드 및 외부 링크 열기</td></tr>
+      <tr><td>광고 ID (com.google.android.gms.permission.AD_ID, ACCESS_ADSERVICES_AD_ID / ATTRIBUTION / TOPICS)</td><td>Google AdMob 광고 게재 및 성과 측정 (2항 참조)</td></tr>
+      <tr><td>WAKE_LOCK, FOREGROUND_SERVICE</td><td>광고 SDK·시스템 라이브러리가 내부적으로 사용하며, 개인정보를 수집하지 않습니다.</td></tr>
+    </tbody>
+  </table>
+  <p>앱은 위치, 연락처, 마이크, 통화 기록 권한을 사용하지 않습니다.</p>
 
-    <h2>6. 이용자 권리 및 데이터 삭제</h2>
-    <p>
-      모든 기록·사진·태그·메모는 기기 내부에 저장되므로, 앱 안에서 개별 기록을 직접 삭제하거나
-      앱을 기기에서 삭제하는 방식으로 모든 데이터를 즉시 제거할 수 있습니다. 별도 서버에 남는
-      개인 식별 데이터가 없으므로 개발자에게 별도 삭제 요청을 할 필요가 없습니다.
-    </p>
+  <h3>5. 보관 기간 및 삭제</h3>
+  <ul>
+    <li>모든 기록은 이용자가 삭제하기 전까지 기기에만 보관됩니다.</li>
+    <li>앱 안에서 운행·주유·병원(정비) 예약·기념일 기록과 사진을 언제든지 개별 삭제할 수 있습니다.</li>
+    <li>앱을 삭제(제거)하면 기기에 저장된 모든 데이터가 함께 삭제됩니다.</li>
+    <li>개발자 서버에 저장된 데이터가 없으므로 별도의 삭제 요청 절차는 필요하지 않습니다. 궁금한 점은 이메일로 문의해 주세요.</li>
+    <li>Google AdMob이 처리하는 데이터는 Google 정책에 따르며, 광고 ID 재설정·삭제로 관리할 수 있습니다.</li>
+  </ul>
 
-    <h2>7. 개인정보처리방침의 변경</h2>
-    <p>
-      본 방침은 법령이나 서비스 변경 사항을 반영하기 위해 개정될 수 있으며, 변경 시 본 페이지를 통해
-      게시합니다. 페이지 상단의 시행일을 통해 최신 개정 여부를 확인할 수 있습니다.
-    </p>
+  <h3>6. 아동의 개인정보</h3>
+  <p>앱은 운전자를 위한 기록 앱으로 <strong>만 18세 이상</strong>을 대상으로 하며, 아동을 대상으로 하지 않습니다. 개발자는 아동의 개인정보를 수집하지 않습니다.
+  아동의 정보가 제공된 사실을 알게 되면 위 이메일로 알려 주십시오.</p>
 
-    <h2>8. 문의처</h2>
-    <p>개인정보처리방침에 대한 문의는 아래 이메일로 연락해주세요.</p>
-    <div class="card">
-      개발자: K-Brain Games Lab<br>
-      이메일: <a href="mailto:teeth07@naver.com">teeth07@naver.com</a>
-    </div>
-  </section>
+  <h3>7. 보안</h3>
+  <p>기록 데이터는 Android 앱 샌드박스 안의 앱 전용 저장소에 보관되어 다른 앱이 접근할 수 없습니다. 광고 SDK와의 통신은 암호화(HTTPS)되어 전송됩니다.
+  다만 기기 분실이나 루팅 등 기기 자체의 보안이 손상된 경우까지 보호할 수는 없으므로, 기기 화면 잠금 사용을 권장합니다.</p>
 
-  <section class="doc doc-en">
-    <p>
-      <strong>CarDaily</strong> (the "App") is developed and operated by <strong>K-Brain Games Lab</strong> (the "Developer").
-      This Privacy Policy explains what information is collected while using the App and how it is handled.
-    </p>
+  <h3>8. 방침의 변경</h3>
+  <p>본 방침이 변경되는 경우 이 페이지에 개정 내용을 게시하고 상단의 시행일을 갱신합니다. 중요한 변경이 있는 경우 앱 업데이트 내용 또는 앱 내 안내를 통해 함께 알립니다.</p>
 
-    <h2>1. Information We Collect</h2>
-    <table>
-      <thead><tr><th>Data</th><th>Purpose</th><th>Storage</th></tr></thead>
-      <tbody>
-        <tr>
-          <td>Drive logs (date, start/end location, distance, time)</td>
-          <td>Displaying your calendar entries and statistics (drive frequency, distance trends, etc.)</td>
-          <td>Local database on your device (SQLite)</td>
-        </tr>
-        <tr>
-          <td>Photos (up to 2 per log)</td>
-          <td>Attaching photos to a given day's log</td>
-          <td>Local storage on your device (never transmitted)</td>
-        </tr>
-        <tr>
-          <td>Companion tag, purpose tag, mood tag, and memo text</td>
-          <td>Storing log details and providing statistics</td>
-          <td>Local database on your device</td>
-        </tr>
-        <tr>
-          <td>Upcoming maintenance booking information</td>
-          <td>Managing and reminding you of upcoming vehicle maintenance</td>
-          <td>Local database on your device</td>
-        </tr>
-        <tr>
-          <td>Anniversary/milestone information</td>
-          <td>Showing yearly recurring vehicle milestones on the calendar</td>
-          <td>Local database on your device</td>
-        </tr>
-        <tr>
-          <td>Your car's nickname</td>
-          <td>Displaying the nickname on the home screen</td>
-          <td>Local storage on your device (SharedPreferences)</td>
-        </tr>
-        <tr>
-          <td>Advertising ID</td>
-          <td>Serving personalized ads and measuring performance via Google AdMob</td>
-          <td>Shared with Google AdMob (third party)</td>
-        </tr>
-      </tbody>
-    </table>
-    <p>
-      The App does not require account registration or login, and does not automatically collect location data
-      (start/end locations are plain text you type in yourself). It also does not collect directly identifying
-      information such as your name, email address, or phone number. All of the drive logs, photos, tags, memos,
-      maintenance bookings, anniversaries, and nickname listed above are stored only on your device and are never
-      sent to the Developer's servers.
-    </p>
+  <h3>9. 문의처</h3>
+  <p>개발자: K-Brain Games Lab<br>이메일: <a href="mailto:teeth07@naver.com">teeth07@naver.com</a></p>
+</section>
 
-    <h2>2. Third-Party Services</h2>
-    <p>The App uses the following services, each governed by its own privacy policy:</p>
-    <ul>
-      <li><strong>Google AdMob</strong> — used to display banner and interstitial ads within the App, and may collect device information such as the advertising identifier.</li>
-      <li><strong>Coupang Partners and Naver Shopping Connect</strong> — affiliate links shown to users on the Korean (ko) locale as product-search links related to travel or car accessories.</li>
-      <li><strong>Amazon Associates</strong> (affiliate store ID: <code>wedia</code>) — affiliate links shown to users on locales other than Korean.</li>
-    </ul>
-    <p>
-      Shopping affiliate links only activate when you tap the "See related products" action shown after saving a
-      drive log. Tapping shows a confirmation dialog with the actual destination URL first, and you are taken to
-      the retailer's site only after you confirm. That visit is reported directly to the relevant platform
-      (Coupang, Naver, or Amazon) at the moment you follow the link — it does not pass through the Developer's
-      servers.
-    </p>
-    <div class="card">
-      For details on how each service handles data, see:
-      <ul>
-        <li>Google Privacy Policy: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com/privacy</a></li>
-        <li>AdMob data & privacy: <a href="https://support.google.com/admob/answer/6128543" target="_blank" rel="noopener">support.google.com/admob</a></li>
-        <li>Coupang Partners terms: <a href="https://partners.coupang.com" target="_blank" rel="noopener">partners.coupang.com</a></li>
-        <li>Amazon Privacy Notice: <a href="https://www.amazon.com/privacy" target="_blank" rel="noopener">amazon.com/privacy</a></li>
-      </ul>
-    </div>
+<hr>
 
-    <h2>3. Data Storage & Security</h2>
-    <ul>
-      <li>All personal records you create in the App — drive logs, photos, companion/purpose/mood tags, memos, maintenance bookings, anniversaries, and your car's nickname — are stored <strong>only in a local database and local storage on your device</strong> and are never uploaded to or stored on the Developer's servers.</li>
-      <li>Photos are stored only in local storage on your device and are never transmitted to any server.</li>
-      <li>Uninstalling the App removes all locally stored data (drive logs, photos, tags, memos, maintenance bookings, anniversaries, and nickname) from your device.</li>
-    </ul>
+<!-- ===================== English ===================== -->
+<section id="en" lang="en">
+  <h2>Privacy Policy (English)</h2>
+  <p>
+    K-Brain Games Lab (the "Developer") develops and operates the Android app <strong>CarDaily (자동차 일지)</strong> (the "App").
+    This policy explains what information the App collects, stores, uses and shares, and how you can control it.
+  </p>
+  <ul>
+    <li>Developer: K-Brain Games Lab</li>
+    <li>App name: CarDaily (자동차 일지)</li>
+    <li>Contact: <a href="mailto:teeth07@naver.com">teeth07@naver.com</a></li>
+    <li>Effective date: November 10, 2026</li>
+  </ul>
 
-    <h2>4. Advertising</h2>
-    <p>
-      The App displays banner and interstitial ads through Google AdMob, which may share device information
-      such as the advertising identifier with Google. If you do not want personalized ads, you can limit ad
-      personalization in your device settings:
-    </p>
-    <ul>
-      <li>Android: Settings &gt; Privacy &gt; Ads &gt; Opt out of Ads Personalization</li>
-      <li>iOS: Settings &gt; Privacy &amp; Security &gt; Tracking &gt; turn off "Allow Apps to Request to Track"</li>
-    </ul>
+  <h3>1. Information Stored and How It Is Handled</h3>
+  <p>The App requires no account or login and does not collect directly identifying information such as your name, email address or phone number.
+  The information below, which you enter or select yourself, is <strong>stored only on your device (SQLite database and app-private storage)</strong>
+  and is <strong>never transmitted to the Developer's servers or to third parties.</strong> The Developer has no access to it.</p>
+  <table>
+    <thead><tr><th>Data</th><th>Purpose</th><th>Storage</th></tr></thead>
+    <tbody>
+      <tr><td>Drive logs (date, time, distance, companion/purpose/mood tags)</td><td>Calendar entries and statistics</td><td>On-device SQLite</td></tr>
+      <tr><td>Departure and destination text</td><td>Shown in drive logs (free text you type; no GPS location is collected)</td><td>On-device SQLite</td></tr>
+      <tr><td>Memos</td><td>Notes attached to drive logs</td><td>On-device SQLite</td></tr>
+      <tr><td>Photos (up to 3 per log)</td><td>Attaching photos to drive logs</td><td>App-private storage on device (file paths in SQLite)</td></tr>
+      <tr><td>Car nickname</td><td>Shown on the home screen</td><td>On-device storage (SharedPreferences)</td></tr>
+      <tr><td>Fuel records</td><td>Tracking refuelling history and costs</td><td>On-device SQLite</td></tr>
+      <tr><td>Car "hospital" (maintenance shop) booking records</td><td>Managing upcoming maintenance</td><td>On-device SQLite</td></tr>
+      <tr><td>Anniversary records</td><td>Showing car-related anniversaries on the calendar</td><td>On-device SQLite</td></tr>
+    </tbody>
+  </table>
+  <p>If you use the share feature, an image of the record is passed to the app you choose (e.g. a messenger), whose own policy then applies.
+  If you choose to save a photo, it is saved to your device gallery.</p>
 
-    <h2>5. Children's Privacy</h2>
-    <p>The App is not directed at children under 14, and we do not knowingly collect personal information from children.</p>
+  <h3>2. Advertising (Google AdMob)</h3>
+  <p>The App shows banner and interstitial ads through Google AdMob. The <strong>Google AdMob SDK automatically collects and uses your Advertising ID,
+  device information (device model, OS version, language, IP address, etc.) and ad interaction data</strong>, which is <strong>shared with Google</strong>
+  for ad delivery, personalised advertising, measurement and fraud prevention. The Developer does not collect or store this data itself.</p>
+  <p>You can reset or delete your Advertising ID and opt out of personalised ads at any time in your device settings:</p>
+  <ul>
+    <li>Android: Settings &gt; Privacy (or Google) &gt; Ads &gt; Reset advertising ID / Delete advertising ID</li>
+    <li>Ad personalisation: <a href="https://adssettings.google.com">https://adssettings.google.com</a></li>
+  </ul>
+  <p>For details on how Google handles data:</p>
+  <ul>
+    <li>Google Privacy Policy: <a href="https://policies.google.com/privacy">https://policies.google.com/privacy</a></li>
+    <li>How Google uses information from sites or apps that use its services: <a href="https://policies.google.com/technologies/partner-sites">https://policies.google.com/technologies/partner-sites</a></li>
+  </ul>
 
-    <h2>6. Your Rights & Data Deletion</h2>
-    <p>
-      Because all logs, photos, tags, and memos are stored locally on your device, you can delete individual
-      entries from within the App, or remove all data instantly by uninstalling the App. Since no personally
-      identifying data is retained on a remote server, there is no separate deletion request needed from the
-      Developer.
-    </p>
+  <h3>3. External Links</h3>
+  <ul>
+    <li><strong>YouTube search</strong>: when you tap the button, YouTube search results open in the YouTube app or an external browser.</li>
+    <li><strong>Shopping affiliate links</strong>: Coupang Partners, Naver Connect and Amazon Associates links open in an external app or browser only when you tap them.</li>
+  </ul>
+  <p>Once you leave the App, the privacy policy of that service (YouTube/Google, Coupang, Naver, Amazon) applies. The App does not collect your activity after you leave.</p>
+  <div class="card">
+    <strong>Affiliate disclosure:</strong> As part of the Coupang Partners program, the Developer may receive a commission.
+    As a participant in Naver Connect and the Amazon Associates program, the Developer may also earn a commission from qualifying purchases. This does not change the price you pay.
+  </div>
 
-    <h2>7. Changes to This Policy</h2>
-    <p>
-      This Privacy Policy may be updated to reflect changes in law or in the App's features. Any changes will
-      be posted on this page, and the effective date at the top of the page indicates the latest revision.
-    </p>
+  <h3>4. App Permissions</h3>
+  <table>
+    <thead><tr><th>Permission</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td>Photo selection (gallery access)</td><td>Uses the Android system photo picker so you can choose photos to attach to a log. The App can read only the photos you select and does not request broad gallery access.</td></tr>
+      <tr><td>Camera (CAMERA)</td><td>Used only when you choose "Take photo" to attach a picture to a log.</td></tr>
+      <tr><td>Write storage (WRITE_EXTERNAL_STORAGE, Android 10 and below only)</td><td>Saves a photo to your gallery when you ask it to.</td></tr>
+      <tr><td>Internet, network state (INTERNET, ACCESS_NETWORK_STATE)</td><td>Loading ads and opening external links</td></tr>
+      <tr><td>Advertising ID (com.google.android.gms.permission.AD_ID, ACCESS_ADSERVICES_AD_ID / ATTRIBUTION / TOPICS)</td><td>Google AdMob ad delivery and measurement (see section 2)</td></tr>
+      <tr><td>WAKE_LOCK, FOREGROUND_SERVICE</td><td>Used internally by the ads SDK and system libraries; no personal data is collected.</td></tr>
+    </tbody>
+  </table>
+  <p>The App does not use location, contacts, microphone or call log permissions.</p>
 
-    <h2>8. Contact</h2>
-    <p>If you have questions about this Privacy Policy, please contact us at:</p>
-    <div class="card">
-      Developer: K-Brain Games Lab<br>
-      Email: <a href="mailto:teeth07@naver.com">teeth07@naver.com</a>
-    </div>
-  </section>
+  <h3>5. Retention and Deletion</h3>
+  <ul>
+    <li>All records stay only on your device until you delete them.</li>
+    <li>You can delete individual drive, fuel, maintenance booking and anniversary records and photos inside the App at any time.</li>
+    <li>Uninstalling the App deletes all data stored on your device.</li>
+    <li>No data is stored on the Developer's servers, so no separate deletion request is needed. Questions can be sent by email.</li>
+    <li>Data processed by Google AdMob is governed by Google's policies and can be managed by resetting or deleting your Advertising ID.</li>
+  </ul>
 
-  <footer>
-    CarDaily &middot; K-Brain Games Lab &middot; teeth07@naver.com
-  </footer>
+  <h3>6. Children's Privacy</h3>
+  <p>The App is a logbook for drivers intended for users <strong>aged 18 and over</strong> and is not directed at children. The Developer does not collect personal information from children.
+  If you believe a child has provided information, please contact us at the email above.</p>
+
+  <h3>7. Security</h3>
+  <p>Records are kept in app-private storage inside the Android app sandbox, which other apps cannot access. Communication by the ads SDK is encrypted (HTTPS).
+  We cannot protect data if the device itself is compromised (lost, rooted, etc.), so we recommend using a screen lock.</p>
+
+  <h3>8. Changes to This Policy</h3>
+  <p>If this policy changes, the updated version will be posted on this page and the effective date at the top will be updated. Significant changes will also be announced in the App's update notes or within the App.</p>
+
+  <h3>9. Contact</h3>
+  <p>Developer: K-Brain Games Lab<br>Email: <a href="mailto:teeth07@naver.com">teeth07@naver.com</a></p>
+</section>
+
+<footer>
+  CarDaily(자동차 일지) · K-Brain Games Lab · <a href="mailto:teeth07@naver.com">teeth07@naver.com</a> · 시행일 / Effective 2026-11-10
+</footer>
+
 </div>
 </body>
 </html>

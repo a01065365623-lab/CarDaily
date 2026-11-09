@@ -7,6 +7,7 @@ import '../db/database_helper.dart';
 import '../models/companion_tag.dart';
 import '../models/drive.dart';
 import '../theme/app_colors.dart';
+import '../utils/youtube_launcher.dart';
 import 'photo_gallery_screen.dart';
 import 'record_input_screen.dart';
 
@@ -124,6 +125,44 @@ class _DriveDetailScreenState extends State<DriveDetailScreen> {
                     fontWeight: FontWeight.w600,
                     color: AppColors.textPrimary,
                   ),
+                ),
+              ),
+              const SizedBox(height: 20),
+            ],
+            if (_drive.placesNote != null && _drive.placesNote!.isNotEmpty) ...[
+              _DetailSectionTitle(l10n.recordInputSectionPlaces),
+              _DetailCard(
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.restaurant_rounded,
+                      color: AppColors.amberDark,
+                      size: 18,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        _drive.placesNote!,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed:
+                          () => openYoutubeSearch(
+                            l10n.recordInputPlacesSearchQuery(
+                              _drive.placesNote!,
+                            ),
+                          ),
+                      icon: const Icon(Icons.ondemand_video_rounded),
+                      color: AppColors.woodBrown,
+                      tooltip: l10n.recordInputPlacesYoutubeButton,
+                      visualDensity: VisualDensity.compact,
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: 20),

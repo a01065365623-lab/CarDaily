@@ -22,7 +22,7 @@ class DatabaseHelper {
     final path = join(dbPath, 'cardaily.db');
     return openDatabase(
       path,
-      version: 5,
+      version: 6,
       onConfigure: (db) async {
         await db.execute('PRAGMA foreign_keys = ON');
       },
@@ -45,6 +45,10 @@ class DatabaseHelper {
         }
         if (oldVersion < 5) {
           await db.execute('ALTER TABLE drives ADD COLUMN song_title TEXT');
+        }
+        if (oldVersion < 6) {
+          // 기존 기록은 그대로 두고 nullable 컬럼만 추가한다.
+          await db.execute('ALTER TABLE drives ADD COLUMN places_note TEXT');
         }
       },
     );
@@ -91,6 +95,7 @@ class DatabaseHelper {
         memo TEXT,
         photo_paths TEXT NOT NULL,
         song_title TEXT,
+        places_note TEXT,
         created_at TEXT NOT NULL
       )
     ''');
