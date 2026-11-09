@@ -195,55 +195,64 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     trailing: const Icon(Icons.open_in_new_rounded, color: AppColors.textSecondary),
                   ),
                 ),
-                const SizedBox(height: 32),
-                Padding(
-                  padding: const EdgeInsets.only(left: 4, bottom: 8),
-                  child: Text(
-                    l10n.settingsOtherAppsTitle,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.cardBackground,
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: AppColors.divider),
-                  ),
-                  child: Column(
-                    children: [
-                      for (var i = 0; i < kCrossPromoApps.length; i++) ...[
-                        if (i > 0) const Divider(height: 1, color: AppColors.divider),
-                        ListTile(
-                          title: Text(
-                            kCrossPromoApps[i].name(l10n),
-                            style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.textPrimary,
-                            ),
-                          ),
-                          subtitle: Text(
-                            kCrossPromoApps[i].description(l10n),
-                            style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
-                          ),
-                          trailing: OutlinedButton(
-                            onPressed: () => _openExternal(kCrossPromoApps[i].playStoreUri),
-                            child: Text(l10n.settingsOtherAppsOpen),
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
+                for (final category in CrossPromoCategory.values)
+                  ..._buildCrossPromoGroup(l10n, category),
                 // 광고 영역(하단 배너 등)과 최소 24dp 이상 간격을 둔다.
                 const SizedBox(height: 32),
               ],
             ),
     );
+  }
+
+  List<Widget> _buildCrossPromoGroup(AppLocalizations l10n, CrossPromoCategory category) {
+    final apps = kCrossPromoApps.where((a) => a.category == category).toList();
+    if (apps.isEmpty) return const [];
+    return [
+      const SizedBox(height: 32),
+      Padding(
+        padding: const EdgeInsets.only(left: 4, bottom: 8),
+        child: Text(
+          category.title(l10n),
+          style: const TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w700,
+            color: AppColors.textSecondary,
+          ),
+        ),
+      ),
+      Container(
+        decoration: BoxDecoration(
+          color: AppColors.cardBackground,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: AppColors.divider),
+        ),
+        child: Column(
+          children: [
+            for (var i = 0; i < apps.length; i++) ...[
+              if (i > 0) const Divider(height: 1, color: AppColors.divider),
+              ListTile(
+                title: Text(
+                  apps[i].name(l10n),
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                subtitle: Text(
+                  apps[i].description(l10n),
+                  style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                ),
+                trailing: OutlinedButton(
+                  onPressed: () => _openExternal(apps[i].playStoreUri),
+                  child: Text(l10n.settingsOtherAppsOpen),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    ];
   }
 
   Future<void> _openExternal(Uri uri) async {
