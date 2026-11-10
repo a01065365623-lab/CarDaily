@@ -2,7 +2,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 /// 개인정보처리방침(GitHub Pages) URL.
 const String kPrivacyPolicyUrl =
-    'https://a01065365623-lab.github.io/CarDaily/privacy.html';
+    'https://a01065365623-lab.github.io/CarDaily/privacy-cardaily.html';
 
 /// 설정 화면에서 앱을 묶어 보여주는 그룹. enum 선언 순서가 화면 표시 순서다.
 enum CrossPromoCategory {
